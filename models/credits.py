@@ -8,5 +8,5 @@ class Credit(db.Model):
     description = db.Column(db.String(), nullable=False)
     contribution_date = db.Column(db.Date())
 
-    song_id = db.Column(db.Integer, db.ForeignKey("musicians.id"), nullable=False)
-    musician_id = db.Column(db.Integer, db.ForeignKey("songs.id"), nullable=False)
+    song_id = db.Column(db.Integer, db.ForeignKey("songs.id"), nullable=False)
+    musician_id = db.Column(db.Integer, db.ForeignKey("musicians.id"), nullable=False)
