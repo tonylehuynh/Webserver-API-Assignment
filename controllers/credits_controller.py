@@ -48,10 +48,13 @@ def delete_credit(id):
     # Ensure musician is admin
     check_admin()
     # Find the credit
-    credit = Credit.query.filter_by(id=id).first()
+    credit = Credit.query.options(db.joinedload(
+        Credit.musician), db.joinedload(Credit.song)).filter_by(id=id).first()
+
     if not credit:
         return abort(400, description="Credit id does not exist")
 
+    db.session.expunge(credit)
     db.session.delete(credit)
     db.session.commit()
 
