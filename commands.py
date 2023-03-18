@@ -7,6 +7,7 @@ from models.songs import Song
 from models.credits import Credit
 from datetime import time, date
 
+
 db_commands = Blueprint("db", __name__)
 
 
@@ -55,7 +56,7 @@ def seed_db():
         first_name="Admin",
         last_name="Admin",
         profession="Admin",
-        phone_number=0,
+        phone_number="404",
         email="admin@admin.com",
         password=bcrypt.generate_password_hash("password123").decode("utf-8"),
         admin=True
@@ -67,7 +68,7 @@ def seed_db():
         first_name="Frank",
         last_name="Ocean",
         profession="Singer",
-        phone_number=404,
+        phone_number="404",
         email="frank@email.com",
         password=bcrypt.generate_password_hash("123456").decode("utf-8"),
         label_id=label4.id
@@ -78,7 +79,7 @@ def seed_db():
         first_name="Mike",
         last_name="Dean",
         profession="Producer",
-        phone_number=404,
+        phone_number="404",
         email="mike@email.com",
         password=bcrypt.generate_password_hash("123456").decode("utf-8"),
         label_id=label1.id
@@ -89,7 +90,7 @@ def seed_db():
         first_name="Jack",
         last_name="Antonoff",
         profession="Songwriter",
-        phone_number=404,
+        phone_number="404",
         email="jack@email.com",
         password=bcrypt.generate_password_hash("123456").decode("utf-8"),
         label_id=label3.id
@@ -100,7 +101,7 @@ def seed_db():
         first_name="Steve",
         last_name="Lacey",
         profession="Guitarist",
-        phone_number=404,
+        phone_number="404",
         email="steve@email.com",
         password=bcrypt.generate_password_hash("123456").decode("utf-8"),
         label_id=label2.id
@@ -111,7 +112,7 @@ def seed_db():
         first_name="Tyler",
         last_name="Okonma",
         profession="Rapper",
-        phone_number=404,
+        phone_number="404",
         email="tyler@email.com",
         password=bcrypt.generate_password_hash("123456").decode("utf-8"),
         label_id=label5.id
@@ -122,7 +123,7 @@ def seed_db():
         first_name="Kenny",
         last_name="Beats",
         profession="Pianist",
-        phone_number=404,
+        phone_number="404",
         email="kenny@email.com",
         password=bcrypt.generate_password_hash("123456").decode("utf-8"),
         label_id=label2.id
@@ -133,7 +134,7 @@ def seed_db():
         first_name="Thunder",
         last_name="Cat",
         profession="Bassist",
-        phone_number=404,
+        phone_number="404",
         email="thunder@email.com",
         password=bcrypt.generate_password_hash("123456").decode("utf-8"),
         label_id=label3.id
@@ -144,7 +145,7 @@ def seed_db():
         first_name="Anderson",
         last_name="Paak",
         profession="Drummer",
-        phone_number=404,
+        phone_number="404",
         email="anderson@email.com",
         password=bcrypt.generate_password_hash("123456").decode("utf-8"),
         label_id=label3.id
@@ -155,7 +156,7 @@ def seed_db():
         first_name="Jeff",
         last_name="Ellis",
         profession="Mixing Engineer",
-        phone_number=404,
+        phone_number="404",
         email="jeff@email.com",
         password=bcrypt.generate_password_hash("123456").decode("utf-8"),
     )
@@ -165,7 +166,7 @@ def seed_db():
         first_name="Dave",
         last_name="Pensado",
         profession="Mastering Engineer",
-        phone_number=404,
+        phone_number="404",
         email="dave@email.com",
         password=bcrypt.generate_password_hash("123456").decode("utf-8"),
     )
