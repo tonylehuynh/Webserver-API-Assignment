@@ -3,6 +3,7 @@ from main import db
 from models.labels import Label
 from models.musicians import Musician
 from schemas.label_schema import label_schema, labels_schema
+from schemas.musician_schema import musicians_schema
 from flask_jwt_extended import jwt_required
 from functions import check_admin, validate_string_field
 
@@ -16,6 +17,33 @@ labels = Blueprint('labels', __name__, url_prefix="/labels")
 def get_labels():
     labels_list = Label.query.all()
     result = labels_schema.dump(labels_list)
+    return jsonify(result)
+
+
+@labels.route("/<int:label_id>/musicians", methods=["GET"])
+# Function to get a particular record label and all associated musicians with the label. Can also filter by musician's profession too in the URL.
+def get_label_and_musicians(label_id):
+    label = Label.query.get(label_id)
+    if label is None:
+        abort(404, description="Label id does not exist")
+    result = label_schema.dump(label)
+
+    profession = request.args.get("profession")
+    # If no profession is provided in URL, then return all musicians associated with the label
+    if profession is None:
+        musicians_list = Musician.query.filter_by(label_id=label_id).all()
+        result = musicians_schema.dump(musicians_list)
+        return jsonify(result)
+
+    # If profession is provioded in URL - e.g. /musicians?profession=Drummer
+    professions_list = db.session.query(Musician.profession).distinct()
+    professions = [row[0] for row in professions_list]
+    # If profession does not exist in database, return message.
+    if profession not in professions:
+        return jsonify({"message": f"Profession '{profession}' does not exist. Please note profession is also case sensitive."})
+    musicians_list = Musician.query.filter_by(
+        label_id=label_id, profession=profession, admin=False).all()
+    result = musicians_schema.dump(musicians_list)
     return jsonify(result)
 
 

@@ -4,22 +4,83 @@ from models.songs import Song
 from models.credits import Credit
 from models.musicians import Musician
 from schemas.song_schema import song_schema, songs_schema
-from schemas.credit_schema import credit_schema
+from schemas.credit_schema import credit_schema, credits_schema
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from functions import check_admin, validate_string_field
-import datetime
+from datetime import datetime, timedelta
 
 
 songs = Blueprint('songs', __name__, url_prefix="/songs")
 
 
-# GET route endpoints to query songs
+# GET ROUTE endpoints
+# Query all songs
 @songs.route("/", methods=["GET"])
-# Function to get list of all songs
 def get_songs():
     songs_list = Song.query.all()
     result = songs_schema.dump(songs_list)
     return jsonify(result)
+
+
+# Query songs by genre
+@songs.route("/<genre>", methods=["GET"])
+def get_songs_by_genre(genre):
+    valid_genres = db.session.query(Song.genre).distinct().all()
+    if (genre,) not in valid_genres:
+        return jsonify({"message": f"Genre '{genre}' does not exist. Please note genre is also case sensitive."})
+    songs_list = Song.query.filter_by(genre=genre).all()
+    result = songs_schema.dump(songs_list)
+    return jsonify(result)
+
+
+# Get list of songs finished in a particular year.
+@songs.route("/year/<int:year>", methods=["GET"])
+def get_songs_by_year(year):
+    try:
+        start_date = datetime(year=year, month=1, day=1).date()
+        end_date = datetime(year=year+1, month=1, day=1).date()
+    except ValueError:
+        return jsonify({"message": f"Invalid year: {year}"})
+
+    songs_list = Song.query.filter(
+        Song.date_finished >= start_date, Song.date_finished < end_date).all()
+    result = songs_schema.dump(songs_list)
+    return jsonify(result)
+
+
+# Query songs by duration (minutes)
+@songs.route("/duration/<int:minutes>", methods=["GET"])
+def get_songs_by_duration(minutes):
+    # Convert minutes to a timedelta object
+    duration = timedelta(minutes=minutes)
+
+    # Query for songs with duration within the specified range
+    songs_list = Song.query.filter(
+        Song.duration >= duration,
+        Song.duration < duration + timedelta(minutes=1)
+    ).all()
+
+    # Dump the list of songs to JSON and return the response
+    result = songs_schema.dump(songs_list)
+    return jsonify(result)
+
+
+# Query song by ID and then list all credits associated with the song
+@songs.route("/<int:song_id>/credits", methods=["GET"])
+def get_song_credits(song_id):
+    # Query for the song by ID
+    song = Song.query.get(song_id)
+    # If song doesn't exist, return 404
+    if not song:
+        return jsonify({"message": "Song not found"}), 404
+    # Get the list of credits for the song
+    credits_list = Credit.query.filter_by(song_id=song.id).all()
+    # Create a dictionary with the song title and credits
+    song_credits = {
+        "song_title": song.title,
+        "credits": credits_schema.dump(credits_list)
+    }
+    return jsonify(song_credits)
 
 
 # POST route endpoint
@@ -43,7 +104,7 @@ def create_song():
     duration = song_fields.get("duration")
     if duration:
         try:
-            duration = datetime.datetime.strptime(duration, "%H:%M:%S")
+            duration = datetime.strptime(duration, "%H:%M:%S")
         except (ValueError, TypeError):
             return abort(400, description="Invalid time format for duration. Use HH:MM:SS format.")
 
@@ -51,7 +112,7 @@ def create_song():
     date_finished = song_fields.get("date_finished")
     if date_finished:
         try:
-            date_finished = datetime.datetime.strptime(
+            date_finished = datetime.strptime(
                 date_finished, "%Y-%m-%d")
         except (ValueError, TypeError):
             return abort(400, description="Invalid date format for date_finished. Use YYYY-MM-DD format.")
@@ -86,7 +147,7 @@ def update_song(id):
     duration = song_fields.get("duration")
     if duration:
         try:
-            duration = datetime.datetime.strptime(duration, "%H:%M:%S")
+            duration = datetime.strptime(duration, "%H:%M:%S")
         except (ValueError, TypeError):
             return abort(400, description="Invalid time format for duration. Use HH:MM:SS format.")
         song.duration = duration
@@ -94,7 +155,7 @@ def update_song(id):
     date_finished = song_fields.get("date_finished")
     if date_finished:
         try:
-            date_finished = datetime.datetime.strptime(
+            date_finished = datetime.strptime(
                 date_finished, "%Y-%m-%d")
         except (ValueError, TypeError):
             return abort(400, description="Invalid date format for date_finished. Use YYYY-MM-DD format.")
@@ -151,7 +212,7 @@ def create_credit(id):
 
         contribution_date = credit_fields.get("contribution_date")
         try:
-            contribution_date = datetime.datetime.strptime(
+            contribution_date = datetime.strptime(
                 contribution_date, "%Y-%m-%d")
         except (ValueError, TypeError):
             return abort(400, description="Invalid date format provided or not found for contribution_date. Please provide contribution_date field and use YYYY-MM-DD format.")
@@ -170,7 +231,7 @@ def create_credit(id):
 
     contribution_date = credit_fields.get("contribution_date")
     try:
-        contribution_date = datetime.datetime.strptime(
+        contribution_date = datetime.strptime(
             contribution_date, "%Y-%m-%d")
     except (ValueError, TypeError):
         return abort(400, description="Invalid date format provided or not found for contribution_date. Please provide contribution_date field and use YYYY-MM-DD format.")

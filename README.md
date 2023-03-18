@@ -149,7 +149,893 @@ The use of an ORM can make it easier to write and execute tests. This is because
 
 ## R5
 
-dasds
+I have separated the endpoint documentation by the files: musicians_controller, labels_controller, songs_controller and credits_controller.
+
+
+Below are the steps for authentication. 
+
+
+AUTHENTICATION 
+- Most of the updating/deleting in the database will be done by the Admin user only. 
+- Access token will be returned when logged in. Admin user details are below.
+- Access token can then be pasted into the Authorization header (I used Postman), in the Bearer Token section. 
+
+- VERB: POST
+- URL: http://localhost:5000/musician/login
+```JSON
+{
+    "email": "admin@admin.com",
+    "password": "123456"
+}
+```
+
+Expected return output is:
+
+```JSON
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3OTE1MDg5MCwianRpIjoiOGJhNGIxZDAtYTBjNS00NjhmLTkzZTEtNjg0ZWYzYmE2YTI1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE2NzkxNTA4OTAsImV4cCI6MTY3OTIzNzI5MH0._l6MIoqN4vp5cy_I3pTPdelRfLB9peSDmwy0pA3ycUY",
+    "email": "admin@admin.com",
+    "message": "Musician logged in successfully"
+}
+```
+
+__MUSICIANS_CONTROLLERS ENDPOINTS__
+
+*GET ROUTES - HTTP VERB: GET*
+
+**1.** 
+- Verb: GET
+- URL route: http://localhost:5000/musician/list
+- No authentication
+- Expected response data: Shows list of all musicians in the database with their details (email, first_name, last_name, id, label_id, phone_number, profession). Admin user is excluded from this list
+
+**1.1** 
+
+Also able to filter by profession
+- Example URL route: http://localhost:5000/musician/list?profession=Singer
+- Verb: GET
+- Returns only musicians whose profession is "Singer". In the example seeded data, the musician id returned is 2 and name is Frank Ocean
+
+Example return for where profession is = "Singer"
+```JSON
+[
+    {
+        "email": "frank@email.com",
+        "first_name": "Frank",
+        "id": 2,
+        "label_id": 4,
+        "last_name": "Ocean",
+        "phone_number": "404",
+        "profession": "Singer"
+    }
+]
+```
+
+**2.**
+- Verb: GET
+- URL route: http://localhost:5000/musician/with_label
+- No auth
+- Returns list of all musicians who have a label_id, which means they are associated with a label (Record label)
+
+Example return:
+```JSON
+[
+    {
+        "email": "frank@email.com",
+        "first_name": "Frank",
+        "id": 2,
+        "label_id": 4,
+        "last_name": "Ocean",
+        "phone_number": "404",
+        "profession": "Singer"
+    },
+    {
+        "email": "mike@email.com",
+        "first_name": "Mike",
+        "id": 3,
+        "label_id": 1,
+        "last_name": "Dean",
+        "phone_number": "404",
+        "profession": "Producer"
+    },
+    {
+        "email": "jack@email.com",
+        "first_name": "Jack",
+        "id": 4,
+        "label_id": 3,
+        "last_name": "Antonoff",
+        "phone_number": "404",
+        "profession": "Songwriter"
+    },
+    {
+        "email": "steve@email.com",
+        "first_name": "Steve",
+        "id": 5,
+        "label_id": 2,
+        "last_name": "Lacey",
+        "phone_number": "404",
+        "profession": "Guitarist"
+    },
+    {
+        "email": "kenny@email.com",
+        "first_name": "Kenny",
+        "id": 7,
+        "label_id": 2,
+        "last_name": "Beats",
+        "phone_number": "404",
+        "profession": "Pianist"
+    },
+    {
+        "email": "thunder@email.com",
+        "first_name": "Thunder",
+        "id": 8,
+        "label_id": 3,
+        "last_name": "Cat",
+        "phone_number": "404",
+        "profession": "Bassist"
+    },
+    {
+        "email": "anderson@email.com",
+        "first_name": "Anderson",
+        "id": 9,
+        "label_id": 3,
+        "last_name": "Paak",
+        "phone_number": "404",
+        "profession": "Drummer"
+    }
+]
+```
+
+**3.**
+- Verb: GET
+- URL route: http://localhost:5000/musician/no_label
+- No auth
+- Returns list of all musicians who don't have a label_id, which means they are not associated with a label. label_id fields will be null 
+
+Example return:
+```JSON
+[
+    {
+        "email": "jeff@email.com",
+        "first_name": "Jeff",
+        "id": 10,
+        "label_id": null,
+        "last_name": "Ellis",
+        "phone_number": "404",
+        "profession": "Mixing Engineer"
+    },
+    {
+        "email": "dave@email.com",
+        "first_name": "Dave",
+        "id": 11,
+        "label_id": null,
+        "last_name": "Pensado",
+        "phone_number": "404",
+        "profession": "Mastering Engineer"
+    },
+    {
+        "email": "tyler@email.com",
+        "first_name": "Tyler",
+        "id": 6,
+        "label_id": null,
+        "last_name": "Okonma",
+        "phone_number": "404",
+        "profession": "Rapper"
+    }
+]
+```
+
+**4.**
+- VERB: GET
+- URL route: http://localhost:5000/musician/\<\int:musician_id>/credits
+- EXAMPLE URL: http://localhost:5000/musician/3/credits
+- No auth
+- Retrieves a musician by their ID, provided in URL, and then returns a list of all credits that the musician is associated with. The example for musician_id 3 returns Mike Dean, and they have 4 credits associated with them.
+
+You can also filter by contribution_date(year). Intention is that the musician can search the credits they've done, and also provide the year in the URL, which returns the credits they did in a certain year
+
+- EXAMPLE URL: http://localhost:5000/musician/3/credits?contribution_date=2014
+- This will return Musician 3's associated credits, where the contribution date was in the year 2014. For the example data, two credits are returned with credit_id = 2 and credit_id = 4
+
+```JSON
+{
+    "credits": [
+        {
+            "contribution_date": "2014-03-03",
+            "description": "Vocals, lyrics",
+            "id": 2,
+            "musician_email": "mike@email.com",
+            "musician_id": 3,
+            "song_id": 4,
+            "song_title": "911"
+        },
+        {
+            "contribution_date": "2014-12-11",
+            "description": "Vocals, lyrics",
+            "id": 4,
+            "musician_email": "mike@email.com",
+            "musician_id": 3,
+            "song_id": 6,
+            "song_title": "Thinkin Bout You"
+        }
+    ],
+    "musician_name": "Mike Dean"
+}
+```
+
+
+*POST ROUTES - HTTP VERB: POST*
+
+**5.**
+- VERB: POST
+- URL route: http://localhost:5000/musician/register
+- No auth
+- Will be required to supply information via Body, and raw JSON data
+- Provide data to register user. label_id by default is None, so if label_id isn't provided then the user will still be able to successfully register. Furthermore, if user provides a label_id that doesn't exist, then this will be flagged. 
+
+Required inputs are:
+- "email": string
+- "password": string
+- "first_name": string
+- "last_name": string
+- "profession": string
+- "phone_number": string
+
+Optional input:
+- "label_id": integer
+
+Here is an example raw JSON data input included in the body, to register a musician:
+
+```JSON
+{
+    "email": "sam@email.com",
+    "password": "123456",
+    "first_name": "Sam",
+    "last_name": "Smith",
+    "profession": "Singer",
+    "phone_number": "222",
+    "label_id": 2
+}
+```
+
+It should return access token, email and message saying musician registered successfully.
+
+```JSON
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3OTE1MDY3MywianRpIjoiNzA1NGM1MmYtMTE3NS00MDljLWIxNmEtMTA3YjQzNGIzYTRhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjE0IiwibmJmIjoxNjc5MTUwNjczLCJleHAiOjE2NzkyMzcwNzN9.7Wu4sq0z6jfAgkXAsmBZT-HlDxpK5eSXsoDDr-DSyBY",
+    "email": "sam@email.com",
+    "message": "Musician registered successfully"
+}
+```
+
+**6.**
+- VERB: POST
+- URL: http://localhost:5000/musician/login
+- Required data is the email and password. See below example for the admin user. Once again provided as raw JSON data in the body. 
+
+```JSON
+{
+    "email": "admin@admin.com",
+    "password": "123456"
+}
+```
+Returns the below as an example:
+```JSON
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3OTE1MDg5MCwianRpIjoiOGJhNGIxZDAtYTBjNS00NjhmLTkzZTEtNjg0ZWYzYmE2YTI1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE2NzkxNTA4OTAsImV4cCI6MTY3OTIzNzI5MH0._l6MIoqN4vp5cy_I3pTPdelRfLB9peSDmwy0pA3ycUY",
+    "email": "admin@admin.com",
+    "message": "Musician logged in successfully"
+}
+```
+
+*PUT ROUTE ENDPOINT - HTTP VERB: PUT*
+6.
+- verb: PUT
+- URL: 
+```
+http://localhost:5000/musician//<int:id>/
+```
+- Authentication is required. Needs to be access token of admin user. Provided as a bearer token in the Authorization header. 
+
+
+
+- Access token will be returned when logged in. Admin user details are : verb: POST,  url: http://localhost:5000/musician/login
+```JSON
+{
+    "email": "admin@admin.com",
+    "password": "123456"
+}
+```
+
+- No data is required 100%, as I have coded it so that only the fields provided in the Body (raw JSON) will be be updated accordingly. As long as the fields provided matches the fields of the musician table, and the data inputs are in the correct format, then it will be updated successfully. 
+
+- Here is an example of a JSON input I did to update Musician_ID = 9
+- URL: http://127.0.0.1:5000/musician/9
+
+Body input
+```JSON
+{
+    "phone_number": "This is now updated",
+    "profession": "Updated"
+}
+```
+Data returned
+```JSON
+{
+    "message": "Musician updated successfully",
+    "musician": {
+        "email": "frank2@email.com",
+        "first_name": "Anderson",
+        "id": 9,
+        "label_id": 3,
+        "last_name": "Paak",
+        "phone_number": "This is now updated",
+        "profession": "Updated"
+    }
+}
+```
+Here is an example input to test. Password and admin status can be updated as only the admin user can use this update PUT verb endpoint. 
+```JSON
+{
+    "first_name": "Update",
+    "last_name": "Update",
+    "email": "Update",
+    "profession": "Update",
+    "phone_number": "Update",
+    "password": "123456789",
+    "label_id": 2,
+    "admin": true
+}
+```
+
+*DELETE ROUTE ENDPOINT - HTTP VERB: DELETE*
+
+**7.**
+
+- verb: DELETE
+- Authorization is required in order to delete musician. Bearer token needs to be provided in the Authorization header. Admin user details and login details are found above, to get access token. 
+- Required data is simply just the URL provided. No need for JSON data in the body.
+URL format is
+```
+http://localhost:5000/musician/<int:id>/
+```
+
+Here is an example URL to delete musician_id = 9:
+
+url: http://localhost:5000/musician/9
+
+Here is the response data after successful deletion. Message provided indicated deleted successfully and deleted musician details are shown:
+
+```JSON
+{
+    "message": "Musician deleted successfully",
+    "musician": {
+        "email": "Update",
+        "first_name": "Update",
+        "id": 9,
+        "label_id": 2,
+        "last_name": "Update",
+        "phone_number": "Update",
+        "profession": "Update"
+    }
+}
+```
+
+__LABELS_CONTROLLERS ENDPOINTS__
+
+*GET ROUTES - HTTP VERB: GET*
+
+**1.** 
+- Verb: GET
+- URL is http://localhost:5000/labels
+- Expected response data is below:
+
+```JSON
+[
+    {
+        "id": 1,
+        "name": "Warner Records",
+        "type": "Major"
+    },
+    {
+        "id": 2,
+        "name": "Sony Records",
+        "type": "Major"
+    },
+    {
+        "id": 3,
+        "name": "Universal Records",
+        "type": "Major"
+    },
+    {
+        "id": 4,
+        "name": "Blonded Records",
+        "type": "Independent"
+    },
+    {
+        "id": 5,
+        "name": "Golf Records",
+        "type": "Independent"
+    }
+]
+```
+This query should a return a list of all the labels in the database, and their details.
+
+**2.** 
+- Verb: GET
+- URL is:
+```
+http://localhost:5000/labels//<int:label_id>/musicians
+```
+- This query will return all the musicians that are associated with the label, based on the label id provided in the URL. This is a one to many relationship, so this will return all the musicians that have label_id as a foreign key in the musicians table. 
+
+- Here is an example URL where label_id = 3 is queried: http://localhost:5000/labels/3/musicians
+
+Return data 
+```JSON
+[
+    {
+        "email": "jack@email.com",
+        "first_name": "Jack",
+        "id": 4,
+        "label_id": 3,
+        "last_name": "Antonoff",
+        "phone_number": "404",
+        "profession": "Songwriter"
+    },
+    {
+        "email": "thunder@email.com",
+        "first_name": "Thunder",
+        "id": 8,
+        "label_id": 3,
+        "last_name": "Cat",
+        "phone_number": "404",
+        "profession": "Bassist"
+    },
+    {
+        "email": "anderson@email.com",
+        "first_name": "Anderson",
+        "id": 9,
+        "label_id": 3,
+        "last_name": "Paak",
+        "phone_number": "404",
+        "profession": "Drummer"
+    }
+]
+```
+**2.1**
+- verb: GET
+- Can also filter the above query by profession. So a label can query the musicians that are associated with them, and then filter that by their profession.
+- The example below, label_id = 3, queries to find the musicians associated with the label whose profession is = "Drummer".
+
+- Example URL - http://localhost:5000/labels/3/musicians?profession=Drummer
+
+Return data (only returns musician with profession = "Drummer")
+```JSON
+[
+    {
+        "email": "anderson@email.com",
+        "first_name": "Anderson",
+        "id": 9,
+        "label_id": 3,
+        "last_name": "Paak",
+        "phone_number": "404",
+        "profession": "Drummer"
+    }
+]
+```
+
+*POST ROUTE - HTTP VERB: GET*
+
+**3.** 
+- Verb: POST
+- URL is http://localhost:5000/labels/create
+- Auth is required to create a new label as only admin can create a new label. Bearer token to be provided in Authorization header (Postman was used by me), generated by logging in as the admin user. Admin details provided previously
+- Required input data is in the body as raw JSON. 
+- Required fields are "name" and "type", with both associated with string values. 
+
+See below an example of an input to create a new label:
+```JSON
+{
+    "name": "New Label",
+    "type": "New"
+}
+```
+
+Expected return data:
+```JSON
+{
+    "label": {
+        "id": 6,
+        "name": "New Label",
+        "type": "New"
+    },
+    "message": "Label created successfully"
+}
+```
+
+
+*PUT ROUTE ENDPOINTS - HTTP VERB: PUT*
+
+**4.** 
+- Verb: PUT
+- URL is
+```
+ http://localhost:5000/labels//<int:id>/
+```
+- Auth is required to update label as only admin can update label. Bearer token to be provided in Authorization header (Postman was used by me), generated by logging in as the admin user. Admin details provided previously
+- Required input data is in the body as raw JSON. 
+- Required fields are "name" and "type", with both associated with string values. 
+
+Example URL - http://localhost:5000/labels/5
+
+See below an example of an input to update label_id = 5:
+```JSON
+{
+    "name": "Updated",
+    "type": "Updated"
+}
+```
+
+Expected return data:
+```JSON
+{
+    "label": {
+        "id": 5,
+        "name": "Updated",
+        "type": "Updated"
+    },
+    "message": "Label updated successfully"
+}
+```
+
+*DELETE ROUTE ENDPOINTS - HTTP VERB: DELETE*
+
+**5.** 
+- Verb: DELETE
+- URL is
+```
+ http://localhost:5000/labels//<int:id>/
+```
+- Auth is required to update label as only admin can delete a label. Bearer token to be provided in Authorization header (Postman was used by me), generated by logging in as the admin user. Admin details provided previously
+- No required input data in the body, only URL is required with valid id for label_id
+
+
+Example URL to delete label_id = 5 -> http://localhost:5000/labels/5
+
+
+Expected return data:
+```JSON
+{
+    "label": {
+        "id": 5,
+        "name": "Updated",
+        "type": "Update"
+    },
+    "message": "Label deleted successfully"
+}
+```
+
+__SONGS_CONTROLLERS ENDPOINTS__
+
+*GET ROUTE ENDPOINTS - HTTP VERB: GET*
+
+**1.** 
+- Verb: GET
+- URL is
+```
+http://localhost:5000/songs/
+```
+- No other required input or auth
+- Will return all songs in database with their details 
+
+Expected return data:
+```JSON
+{
+[
+    {
+        "date_finished": "2016-08-01",
+        "duration": "00:04:09",
+        "genre": "Alternative",
+        "id": 1,
+        "title": "Ivy"
+    },
+    {
+        "date_finished": "2022-01-30",
+        "duration": "00:03:52",
+        "genre": "Pop",
+        "id": 2,
+        "title": "Bad Habit"
+    },
+    {
+        "date_finished": "2016-06-06",
+        "duration": "00:02:54",
+        "genre": "RNB",
+        "id": 3,
+        "title": "Suede"
+    },
+    {
+        "date_finished": "2017-08-08",
+        "duration": "00:04:15",
+        "genre": "Rap",
+        "id": 4,
+        "title": "911"
+    },
+    {
+        "date_finished": "2017-09-09",
+        "duration": "00:04:37",
+        "genre": "RNB",
+        "id": 5,
+        "title": "Biking"
+    },
+    {
+        "date_finished": "2012-06-11",
+        "duration": "00:03:20",
+        "genre": "Pop",
+        "id": 6,
+        "title": "Thinkin Bout You"
+    }
+]
+}
+```
+
+**2.** 
+- Verb: GET
+- URL is
+```
+http://localhost:5000/songs/<genre>
+```
+- No other required input or auth
+- Provide genre at the end of the URL and it will provide songs that are in that genre
+
+
+Example URL for genre = "RNB" -> http://localhost:5000/songs/RNB
+
+Expected return data:
+```JSON
+[
+    {
+        "date_finished": "2016-06-06",
+        "duration": "00:02:54",
+        "genre": "RNB",
+        "id": 3,
+        "title": "Suede"
+    },
+    {
+        "date_finished": "2017-09-09",
+        "duration": "00:04:37",
+        "genre": "RNB",
+        "id": 5,
+        "title": "Biking"
+    }
+]
+```
+
+**3.** 
+- Verb: GET
+- URL is
+```
+http://localhost:5000/songs/year/<int:year>
+```
+- No other required input or auth
+- This will return all songs that have a "date_finished" in the year included in the URL.
+
+Example URL for songs that were finished in 2016 -> http://localhost:5000/songs/year/2016
+
+Expected return data:
+```JSON
+[
+    {
+        "date_finished": "2016-08-01",
+        "duration": "00:04:09",
+        "genre": "Alternative",
+        "id": 1,
+        "title": "Ivy"
+    },
+    {
+        "date_finished": "2016-06-06",
+        "duration": "00:02:54",
+        "genre": "RNB",
+        "id": 3,
+        "title": "Suede"
+    }
+]
+```
+
+**4.** 
+- Verb: GET
+- URL is
+```
+http://localhost:5000/songs/duration/<int:minutes>
+```
+- No other required input or auth
+- This will return all songs that have a "duration" (in minutes), as included in the URL.
+
+Example URL for songs that are between 4:00 minutes and 4:59 minutes -> http://localhost:5000/songs/duration/4
+
+Expected return data:
+```JSON
+[
+    {
+        "date_finished": "2016-08-01",
+        "duration": "00:04:09",
+        "genre": "Alternative",
+        "id": 1,
+        "title": "Ivy"
+    },
+    {
+        "date_finished": "2017-08-08",
+        "duration": "00:04:15",
+        "genre": "Rap",
+        "id": 4,
+        "title": "911"
+    },
+    {
+        "date_finished": "2017-09-09",
+        "duration": "00:04:37",
+        "genre": "RNB",
+        "id": 5,
+        "title": "Biking"
+    }
+]
+```
+
+**5.** 
+- Verb: GET
+- URL is
+```
+http://localhost:5000/songs/<int:song_id>/credits
+```
+- No other required input or auth
+- This will return all the credits that are associated with a specific song. The song is specified via the song_id provided in the URL 
+
+Example URL for displaying all credits associated with song_id = 1 -> http://localhost:5000/songs/1/credits
+
+Expected return data:
+```JSON
+{
+    "credits": [
+        {
+            "contribution_date": "2011-01-01",
+            "description": "Vocals, lyrics",
+            "id": 1,
+            "musician_email": "mike@email.com",
+            "musician_id": 3,
+            "song_id": 1,
+            "song_title": "Ivy"
+        },
+        {
+            "contribution_date": "2011-01-01",
+            "description": "Mixing",
+            "id": 15,
+            "musician_email": "dave@email.com",
+            "musician_id": 11,
+            "song_id": 1,
+            "song_title": "Ivy"
+        },
+        {
+            "contribution_date": "2023-01-01",
+            "description": "Mastering",
+            "id": 16,
+            "musician_email": "frank@email.com",
+            "musician_id": 2,
+            "song_id": 1,
+            "song_title": "Ivy"
+        }
+    ],
+    "song_title": "Ivy"
+}
+```
+
+*POST ROUTE ENDPOINTS - HTTP VERB: POST*
+
+**6.** 
+- Verb: POST
+- URL is
+```
+http://localhost:5000/songs/create
+```
+- You are not required to be an admin to create a song however you will need to login as a musician and provide your access token, in the Authorization header as a bearer token.
+- To login as musician "Admin", simply follow the steps provided at the start of the R5 section. 
+
+- Other necessary required input data are the "title" and "genre" with string values associated - in the body as raw JSON. 
+- Non mandatory fields include "duration" with associated time value and "date_finished" with associated date value. These are not necessary to provide in order to create a new song.
+
+Example input data to create a new song
+
+```JSON
+{
+    "title": "New Song!",
+    "genre": "New",
+    "date_finished": "2023-01-01",
+    "duration": "00:03:30"
+}
+```
+
+Expected return response data:
+```JSON
+{
+    "message": "Song created successfully",
+    "song": {
+        "date_finished": "2023-01-01",
+        "duration": "00:03:30",
+        "genre": "New",
+        "id": 8,
+        "title": "New Song!"
+    }
+}
+```
+
+*PUT ROUTE ENDPOINTS - HTTP VERB: PUT*
+
+**7.** 
+- Verb: PUT
+- URL is
+```
+http://localhost:5000/songs/<int:id>/
+```
+- You are required to be an admin in order to update a song through this method.
+- To login and provide authentication (access token in the authorization header as a bearer token) as musician "Admin", simply follow the steps provided at the start of the R5 section. 
+
+- There is no mandatory required input data in the body section with raw JSON. The song will update according to the fields provided. For example, if the only field provided is "title", then only the song "title" will update. 
+
+Example URL to update song_id = 1 -> http://localhost:5000/songs/1
+
+Example input data to update all the song fields
+
+```JSON
+{
+    "title": "Updated",
+    "genre": "Updated",
+    "date_finished": "2000-01-01",
+    "duration": "00:01:11"
+}
+```
+
+Expected return response data:
+```JSON
+{
+    "message": "Song updated successfully",
+    "song": {
+        "date_finished": "2000-01-01",
+        "duration": "00:01:11",
+        "genre": "Updated",
+        "id": 1,
+        "title": "Updated"
+    }
+}
+```
+
+
+*DELETE ROUTE ENDPOINTS - HTTP VERB: DELETE*
+
+**8.** 
+- Verb: DELETE
+- URL is
+```
+http://localhost:5000/songs/<int:id>/
+```
+- You are required to be an admin in order to delete a song through this method.
+- To login and provide authentication (access token in the authorization header as a bearer token) as musician "Admin", simply follow the steps provided at the start of the R5 section. 
+
+- No required input data in the body section with raw JSON. Only need to specify song_id in the URL to be deleted. 
+
+Example URL to delete song_id = 2 -> http://localhost:5000/songs/2
+
+Expected return response data:
+```JSON
+{
+    "message": "Song deleted successfully",
+    "song": {
+        "date_finished": "2022-01-30",
+        "duration": "00:03:52",
+        "genre": "Pop",
+        "id": 2,
+        "title": "Bad Habit"
+    }
+}
+```
+
 
 ## R6
 
@@ -211,7 +1097,7 @@ Below is a screenshot of how the Trello Board looked at this time:
 
 ![Trello Screenshot](./docs/Trello_2.jpg)
 
-2. __Third phase__
+3. __Third phase__
 
 I completed the initial tasks that didn't rely on any coding or the database schema to be set up/finalised.
 
@@ -232,6 +1118,29 @@ This is so that I could check that the database schema didn't have any issues, b
 Here is what the Trello Board looked like at this time:
 
 ![Trello Screenshot](./docs/Trello_3.jpg)
+
+3. __Fourth phase__
+
+The following coding-related tasks were completed at this time:
+
+- Initial set up on the application
+- Installing all requirements + setting up database/user in PostgreSQL
+- Initial main.py file created along with config.py file
+- Database ERD Schema has been implemented. The models and controllers python files have been completed
+- Commands.py file created. Tables were able to be created and dropped. Data has also been added to be seeded into all of the tables.
+
+With the initial application set up complete and most coding related to the database creation and seeding complete - it was time to start on the API related aspects of the application.
+
+I created a number of tasks related to specifically the controllers of the application, which would house the code for the HTTP verbs and API endpoints.
+
+Here is the Trello Board at this point for this phase:
+
+![Trello Screenshot](./docs/Trello_4.jpg)
+
+It can be seen that I had made a whole new column called "Testing done". This is because I realised that there would be a lot of testing of the application and API endpoints. Hence I believed it would be best to split the coding and the testing related tasks.
+
+
+
 
 
 ## REFERENCES

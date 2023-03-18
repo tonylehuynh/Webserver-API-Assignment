@@ -1,3 +1,5 @@
+# Contains the database commands for the initial creation, seeding and dropping of database tables before using the app. 
+# To use commands, run flask db drop, flask db create and flask db seed from the terminal  
 from main import db
 from flask import Blueprint
 from main import bcrypt

@@ -3,6 +3,7 @@ from main import ma
 
 class SongSchema(ma.Schema):
     class Meta:
+        ordered = True
         fields = ['id', 'title', 'genre', 'duration', 'date_finished']
 
 

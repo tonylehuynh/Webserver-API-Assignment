@@ -1,24 +1,91 @@
 from flask import Blueprint, jsonify, request, abort
 from main import db
 from models.musicians import Musician
+from models.credits import Credit
 from schemas.musician_schema import musician_schema, musicians_schema
-from datetime import timedelta
+from schemas.credit_schema import credits_schema
+from datetime import timedelta, datetime
 from main import bcrypt
 from flask_jwt_extended import jwt_required, create_access_token
 from marshmallow.exceptions import ValidationError
 from functions import validate_string_field, validate_label_id, check_admin
+from sqlalchemy import and_, extract
 
 
 musician = Blueprint('musician', __name__, url_prefix="/musician")
 
 
 # GET ROUTES endpoints
+
+# Get list of musicians based on their profession, or return all musicians. Admin excluded.
 @musician.route("/list", methods=["GET"])
-# Function to get list of all musicians
-def get_musicians():
-    musicians_list = Musician.query.all()
+def get_musicians_by_profession():
+    profession = request.args.get("profession")
+    # If no profession is provided in URL, then return list of all musicians
+    if profession is None:
+        musicians_list = Musician.query.filter_by(admin=False).all()
+        result = musicians_schema.dump(musicians_list)
+        return jsonify(result)
+
+    professions_list = db.session.query(Musician.profession).distinct()
+    professions = [row[0] for row in professions_list]
+    # If profession does not exist in database, return message.
+    if profession not in professions:
+        return jsonify({"message": f"Profession '{profession}' does not exist. Please note professsion is also case sensitive."})
+    musicians_list = Musician.query.filter_by(
+        profession=profession, admin=False).all()
     result = musicians_schema.dump(musicians_list)
     return jsonify(result)
+
+
+# Get list of all musicians who are with a label
+@musician.route("/with_label", methods=["GET"])
+def get_musicians_with_label():
+    musicians_list = Musician.query.filter(
+        Musician.label_id.isnot(None), Musician.admin == False).all()
+    result = musicians_schema.dump(musicians_list)
+    return jsonify(result)
+
+
+# Get list of musicians who do not have a label. Admin user is not to be included in list.
+@musician.route("/no_label", methods=["GET"])
+def get_musicians_without_label():
+    musicians_list = Musician.query.filter(
+        Musician.label_id == None, Musician.admin == False).all()
+    result = musicians_schema.dump(musicians_list)
+    return jsonify(result)
+
+
+# Query musician by ID and list all credits associated with the musician. Can also further filter by contribution date in URL
+@musician.route("/<int:musician_id>/credits", methods=["GET"])
+def get_musician_credits(musician_id):
+    # Query for the musician by ID
+    musician = Musician.query.get(musician_id)
+    # If musician doesn't exist, return 404
+    if not musician:
+        return jsonify({"message": "Musician not found"}), 404
+
+    # Get the contribution date parameter from the URL
+    contribution_date_str = request.args.get("contribution_date")
+    if contribution_date_str:
+        try:
+            contribution_date = datetime.strptime(
+                contribution_date_str, '%Y').date()
+        except ValueError:
+            return jsonify({"message": f"Invalid contribution date: {contribution_date_str}. Use YYYY format."}), 400
+        # Get the list of credits for the musician and contribution date
+        credits_list = Credit.query.filter(and_(Credit.musician_id == musician.id, extract(
+            'year', Credit.contribution_date) == contribution_date.year)).all()
+    else:
+        # Get the list of all credits for the musician
+        credits_list = Credit.query.filter_by(musician_id=musician.id).all()
+
+    # Create a dictionary with the musician name and credits
+    musician_credits = {
+        "musician_name": f"{musician.first_name} {musician.last_name}",
+        "credits": credits_schema.dump(credits_list)
+    }
+    return jsonify(musician_credits)
 
 
 # POST routes endpoints
@@ -28,7 +95,7 @@ def musician_register():
     musician_fields = request.json
     # Check if email & password fields are present
     if "email" and "password" not in musician_fields:
-        return abort(400, description="Email and password are required to register. Include the fields: email, password")
+        return abort(400, description="Email and password are required to register, with string values. Include the fields: email, password.")
     # Check if password length requirements are met
     try:
         musician_fields = musician_schema.load(musician_fields)
