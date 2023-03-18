@@ -35,15 +35,8 @@ def musician_register():
     musician.password = bcrypt.generate_password_hash(
         musician_fields["password"]).decode("utf-8")
     musician.admin = False
-
-    label_id = musician_fields.get("label_id")
-    if label_id is not None:
-        if not isinstance(label_id, int):
-            return abort(400, description="Label ID must be an integer value. Otherwise do not include a label_id.")
-        elif label_id < 1 or label_id > 5:
-            return abort(400, description="Label ID must be between 1 and 5. Otherwise do not include a label_id.")
-
-        musician.label_id = label_id
+    label_id = validate_label_id(musician_fields.get("label_id"))
+    musician.label_id = label_id
 
     db.session.add(musician)
     db.session.commit()
@@ -61,3 +54,31 @@ def validate_string_field(data, field_name):
     if not isinstance(field_value, str):
         return abort(400, description=f"{field_name} must be a string value. Please ensure to include the field: {field_name}")
     return field_value
+
+# Function to ensure that label_id foreign key provided is valid.
+
+
+def validate_label_id(label_id):
+    if label_id is not None:
+        if not isinstance(label_id, int):
+            return abort(400, description="Label ID must be an integer value. Otherwise do not include a label_id if you are not with a record label.")
+        elif label_id < 1 or label_id > 5:
+            return abort(400, description="Label ID must be between 1 and 5. Otherwise do not include a label_id if you are not with a record label.")
+    return label_id
+
+
+@musician.route("/login", methods=["POST"])
+def musician_login():
+    musician_fields = request.json
+    email = validate_string_field(musician_fields, "email")
+    password = validate_string_field(musician_fields, "password")
+
+    musician = Musician.query.filter_by(email=email).first()
+
+    if not musician or not bcrypt.check_password_hash(musician.password, password):
+        return abort(401, description="Incorrect email or password")
+
+    expiry = timedelta(days=1)
+    access_token = create_access_token(
+        identity=str(musician.id), expires_delta=expiry)
+    return jsonify({"email": musician.email, "access token": access_token})
