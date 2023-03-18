@@ -15,4 +15,10 @@ class Musician(db.Model):
 
     label_id = db.Column(db.Integer, db.ForeignKey("labels.id"), default=None)
 
+    credits = db.relationship(
+        "Credit",
+        backref="musician",
+        cascade="all, delete"
+    )
+
 

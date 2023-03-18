@@ -1,5 +1,6 @@
 from main import ma
 from marshmallow.validate import Length
+from marshmallow import validates, ValidationError
 
 
 class MusicianSchema(ma.Schema):
@@ -10,6 +11,11 @@ class MusicianSchema(ma.Schema):
     # Set the password's length to a minimum of 6 characters.
     password = ma.String(validate=Length(
         min=6, error="Password must be at least 6 characters long"))
+    
+    @validates('admin')
+    def validate_admin(self, value):
+        if value not in [True, False]:
+            raise ValidationError('Invalid value for admin field. Please provide a boolean value.')
 
 
 musician_schema = MusicianSchema()
