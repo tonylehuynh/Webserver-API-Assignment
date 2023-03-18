@@ -55,7 +55,6 @@ def musician_register():
     if label_id is not None:
         musician.label_id = label_id
 
-
     db.session.add(musician)
     db.session.commit()
 

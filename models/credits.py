@@ -4,7 +4,6 @@ class Credit(db.Model):
     __tablename__= "credits"
 
     id = db.Column(db.Integer,primary_key=True)
-
     description = db.Column(db.String(), nullable=False)
     contribution_date = db.Column(db.Date())
 
