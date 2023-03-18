@@ -62,7 +62,9 @@ def musician_register():
     access_token = create_access_token(
         identity=str(musician.id), expires_delta=expiry)
 
-    return jsonify({"email": musician.email, "access token": access_token})
+    return jsonify({"message": "Musician registered successfully",
+                    "email": musician.email,
+                    "access_token": access_token})
 
 
 @musician.route("/login", methods=["POST"])
@@ -73,20 +75,20 @@ def musician_login():
     password = validate_string_field(musician_fields, "password")
 
     musician = Musician.query.filter_by(email=email).first()
-
     if not musician or not bcrypt.check_password_hash(musician.password, password):
         return abort(401, description="Incorrect email or password")
 
     expiry = timedelta(days=1)
     access_token = create_access_token(
         identity=str(musician.id), expires_delta=expiry)
-    return jsonify({"email": musician.email, "access token": access_token})
+    return jsonify({"message": "Musician logged in successfully",
+                    "email": musician.email,
+                    "access_token": access_token})
 
 
-# PUT route endpoint
+# PUT route endpoint to update musician details
 @musician.route("/<int:id>/", methods=["PUT"])
 @jwt_required()
-# Function to update musician details
 def update_musician(id):
     musician_fields = musician_schema.load(request.json)
     # Ensure musician is admin
@@ -118,7 +120,7 @@ def update_musician(id):
         musician.label_id = validate_label_id(musician_fields, "label_id")
     db.session.commit()
 
-    return jsonify(musician_schema.dump(musician))
+    return jsonify(message="Musician updated successfully", musician=musician_schema.dump(musician))
 
 
 # DELETE route endpot to delete musician from database
@@ -127,7 +129,6 @@ def update_musician(id):
 def delete_musician(id):
     # Ensure musician is admin
     check_admin()
-
     # Find the musician
     musician = Musician.query.filter_by(id=id).first()
     if not musician:
@@ -135,4 +136,4 @@ def delete_musician(id):
     db.session.delete(musician)
     db.session.commit()
 
-    return jsonify(musician_schema.dump(musician))
+    return jsonify(message="Musician deleted successfully", musician=musician_schema.dump(musician))

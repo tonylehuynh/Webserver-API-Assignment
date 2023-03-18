@@ -19,10 +19,9 @@ def get_labels():
     return jsonify(result)
 
 
-# POST route endpoint
+# POST route endpoint to create new label
 @labels.route("/create", methods=["POST"])
 @jwt_required()
-# Function to create new record label
 def create_label():
     label_fields = label_schema.load(request.json)
     # Ensure musician is admin before being able to create new label
@@ -40,13 +39,12 @@ def create_label():
     db.session.add(new_label)
     db.session.commit()
 
-    return jsonify(label_schema.dump(new_label))
+    return jsonify(message="Label created successfully", label=label_schema.dump(new_label))
 
 
-# PUT route endpoint
+# PUT route endpoint to update label
 @labels.route("/<int:id>/", methods=["PUT"])
 @jwt_required()
-# Function to update label
 def update_label(id):
     label_fields = label_schema.load(request.json)
     # Ensure musician is admin
@@ -60,10 +58,10 @@ def update_label(id):
     label.type = validate_string_field(label_fields, "type")
     db.session.commit()
 
-    return jsonify(label_schema.dump(label))
+    return jsonify(message="Label updated successfully", label=label_schema.dump(label))
 
 
-# DELETE route endpot to delete label from database
+# DELETE route endpoint to delete label from database
 @labels.route("/<int:id>/", methods=["DELETE"])
 @jwt_required()
 def delete_label(id):
@@ -84,4 +82,4 @@ def delete_label(id):
     db.session.delete(label)
     db.session.commit()
 
-    return jsonify(label_schema.dump(label))
+    return jsonify(message="Label deleted successfully", label=label_schema.dump(label))
