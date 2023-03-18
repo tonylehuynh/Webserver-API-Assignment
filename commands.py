@@ -58,7 +58,7 @@ def seed_db():
         profession="Admin",
         phone_number="404",
         email="admin@admin.com",
-        password=bcrypt.generate_password_hash("password123").decode("utf-8"),
+        password=bcrypt.generate_password_hash("123456").decode("utf-8"),
         admin=True
     )
     db.session.add(admin_musician)
