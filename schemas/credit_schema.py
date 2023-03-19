@@ -2,7 +2,6 @@ from main import ma
 from marshmallow import fields
 
 
-
 class CreditSchema(ma.Schema):
     class Meta:
         ordered = True

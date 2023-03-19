@@ -1,5 +1,6 @@
 from main import db
 
+
 class Musician(db.Model):
     __tablename__= "musicians"
     

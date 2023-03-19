@@ -14,7 +14,8 @@ songs = Blueprint('songs', __name__, url_prefix="/songs")
 
 
 # GET ROUTE endpoints
-# Query all songs
+
+# Retrieves all songs from database
 @songs.route("/", methods=["GET"])
 def get_songs():
     songs_list = Song.query.all()
@@ -22,7 +23,7 @@ def get_songs():
     return jsonify(result)
 
 
-# Query songs by genre
+# Retrieves all songs from the database with the specified genre provided in the URL
 @songs.route("/<genre>", methods=["GET"])
 def get_songs_by_genre(genre):
     valid_genres = db.session.query(Song.genre).distinct().all()
@@ -33,7 +34,7 @@ def get_songs_by_genre(genre):
     return jsonify(result)
 
 
-# Get list of songs finished in a particular year.
+# Retrieves all songs from the database with the specified date_finished (year) provided in the URL
 @songs.route("/year/<int:year>", methods=["GET"])
 def get_songs_by_year(year):
     try:
@@ -48,7 +49,7 @@ def get_songs_by_year(year):
     return jsonify(result)
 
 
-# Query songs by duration (minutes)
+# Retrieves all songs from the database with the specified duration (minutes) provided in the URL
 @songs.route("/duration/<int:minutes>", methods=["GET"])
 def get_songs_by_duration(minutes):
     # Convert minutes to a timedelta object
@@ -65,7 +66,7 @@ def get_songs_by_duration(minutes):
     return jsonify(result)
 
 
-# Query song by ID and then list all credits associated with the song
+# Retrieves all credits associated with a specified song ID provided in the URL
 @songs.route("/<int:song_id>/credits", methods=["GET"])
 def get_song_credits(song_id):
     # Query for the song by ID
@@ -83,10 +84,9 @@ def get_song_credits(song_id):
     return jsonify(song_credits)
 
 
-# POST route endpoint
+# POST route endpoint. This route creates a new song in the database with the fields provided in the request.
 @songs.route("/create", methods=["POST"])
 @jwt_required()
-# Function to create new record song
 def create_song():
     song_fields = song_schema.load(request.json)
     # Check if song already exists
@@ -126,10 +126,9 @@ def create_song():
     return jsonify(message="Song created successfully", song=song_schema.dump(new_song))
 
 
-# PUT route endpoint
+# PUT route endpoint. This route updates an existing song in the database with the fields provided in the request.
 @songs.route("/<int:id>/", methods=["PUT"])
 @jwt_required()
-# Function to update song
 def update_song(id):
     song_fields = song_schema.load(request.json)
     # Ensure musician user is admin
@@ -166,7 +165,7 @@ def update_song(id):
     return jsonify(message="Song updated successfully", song=song_schema.dump(song))
 
 
-# DELETE route endpoint to delete song from database
+# DELETE route endpoint. This route deletes a specified song from the database, with the song id provided in the URL.
 @songs.route("/<int:id>/", methods=["DELETE"])
 @jwt_required()
 def delete_song(id):
@@ -186,7 +185,8 @@ def delete_song(id):
 # CREDITS SECTION BELOW - CREATE NEW CREDIT WITH SONG ID & MUSICIAN ID ATTACHED
 
 
-# POST route endpoint to create new song credit. Otherwise update song credit if already exists
+# POST route endpoint.
+# This route creates a new credit associated with a specified song and musician in the database. Otherwise update song credit if it already exists.
 @songs.route("/<int:id>/credit", methods=["POST"])
 @jwt_required()
 def create_credit(id):

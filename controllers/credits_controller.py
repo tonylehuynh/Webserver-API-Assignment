@@ -10,7 +10,7 @@ import datetime
 credits = Blueprint('credits', __name__, url_prefix="/credits")
 
 
-# PUT route endpoint to update credits as admin
+# PUT route endpoint. This route updates an existing credit in the database with the fields provided in the request.
 @credits.route("/<int:id>/", methods=["PUT"])
 @jwt_required()
 def update_credit(id):
@@ -41,7 +41,7 @@ def update_credit(id):
     return jsonify(message="Credit updated successfully", credit=credit_schema.dump(credit))
 
 
-# DELETE route endpoint to delete credit from database
+# DELETE route endpoint. This route deletes a specified credit from the database, with the credit id provided in the URL.
 @credits.route("/<int:id>/", methods=["DELETE"])
 @jwt_required()
 def delete_credit(id):

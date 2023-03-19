@@ -11,17 +11,18 @@ from functions import check_admin, validate_string_field
 labels = Blueprint('labels', __name__, url_prefix="/labels")
 
 
-# GET route endpoints to query record labels
+# GET route endpoints.
+
+# Retrieves all labels from database
 @labels.route("/", methods=["GET"])
-# Function to get list of all record labels
 def get_labels():
     labels_list = Label.query.all()
     result = labels_schema.dump(labels_list)
     return jsonify(result)
 
-
+# Retrieves all associated musicians with a label id that is provided in the URL
+# If profession is provided in the URL, then this query will also further filter by profession. Example URL is - http://localhost:5000/labels/3/musicians?profession=Drummer
 @labels.route("/<int:label_id>/musicians", methods=["GET"])
-# Function to get a particular record label and all associated musicians with the label. Can also filter by musician's profession too in the URL.
 def get_label_and_musicians(label_id):
     label = Label.query.get(label_id)
     if label is None:
@@ -47,7 +48,7 @@ def get_label_and_musicians(label_id):
     return jsonify(result)
 
 
-# POST route endpoint to create new label
+# POST route endpoint. This route creates a new label in the database with the fields provided in the request. 
 @labels.route("/create", methods=["POST"])
 @jwt_required()
 def create_label():
@@ -70,7 +71,7 @@ def create_label():
     return jsonify(message="Label created successfully", label=label_schema.dump(new_label))
 
 
-# PUT route endpoint to update label
+# PUT route endpoint. This route updates a label in the database with the fields provided in the request.
 @labels.route("/<int:id>/", methods=["PUT"])
 @jwt_required()
 def update_label(id):
@@ -89,7 +90,7 @@ def update_label(id):
     return jsonify(message="Label updated successfully", label=label_schema.dump(label))
 
 
-# DELETE route endpoint to delete label from database
+# DELETE route endpoint to delete label from database. This route deletes a specified label from the database, with the label id provided in the URL.
 @labels.route("/<int:id>/", methods=["DELETE"])
 @jwt_required()
 def delete_label(id):

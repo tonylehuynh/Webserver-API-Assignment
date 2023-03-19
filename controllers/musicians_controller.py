@@ -17,7 +17,8 @@ musician = Blueprint('musician', __name__, url_prefix="/musician")
 
 # GET ROUTES endpoints
 
-# Get list of musicians based on their profession, or return all musicians. Admin excluded.
+# Retrieves all songs from database. Admin excluded
+# If profession is specified in the URL, such as http://localhost:5000/musician/list?profession=Drummer, then it will return musicians with that specific profession. 
 @musician.route("/list", methods=["GET"])
 def get_musicians_by_profession():
     profession = request.args.get("profession")
@@ -38,7 +39,7 @@ def get_musicians_by_profession():
     return jsonify(result)
 
 
-# Get list of all musicians who are with a label
+# Retrieves all musicians from database with a label id
 @musician.route("/with_label", methods=["GET"])
 def get_musicians_with_label():
     musicians_list = Musician.query.filter(
@@ -47,7 +48,7 @@ def get_musicians_with_label():
     return jsonify(result)
 
 
-# Get list of musicians who do not have a label. Admin user is not to be included in list.
+# Retrieves all musicians from database with no label id. Admin user is not to be included in list.
 @musician.route("/no_label", methods=["GET"])
 def get_musicians_without_label():
     musicians_list = Musician.query.filter(
@@ -55,8 +56,9 @@ def get_musicians_without_label():
     result = musicians_schema.dump(musicians_list)
     return jsonify(result)
 
-
-# Query musician by ID and list all credits associated with the musician. Can also further filter by contribution date in URL
+ 
+# Retrieve all credits associated with a musician ID, where ID is provided in the URL.
+# Can also further filter the credits retrieved by contribution date in URL - example is: http://localhost:5000/musician/3/credits?contribution_date=2014
 @musician.route("/<int:musician_id>/credits", methods=["GET"])
 def get_musician_credits(musician_id):
     # Query for the musician by ID
@@ -88,9 +90,8 @@ def get_musician_credits(musician_id):
     return jsonify(musician_credits)
 
 
-# POST routes endpoints
+# POST routes endpoints. This route registers and creates a new musician in the database with the fields provided in the request.
 @musician.route("/register", methods=["POST"])
-# Function to register musician
 def musician_register():
     musician_fields = request.json
     # Check if email & password fields are present
@@ -134,8 +135,8 @@ def musician_register():
                     "access_token": access_token})
 
 
+# This route will login a musician in the application if correct email and password fields are provided in the request. JSON access token will also be returned once successful. 
 @musician.route("/login", methods=["POST"])
-# Function to login as a musician by providing email and password.
 def musician_login():
     musician_fields = request.json
     email = validate_string_field(musician_fields, "email")
@@ -153,7 +154,7 @@ def musician_login():
                     "access_token": access_token})
 
 
-# PUT route endpoint to update musician details
+# PUT route endpoint. This route updates an existing musician in the database with the fields provided in the request.
 @musician.route("/<int:id>/", methods=["PUT"])
 @jwt_required()
 def update_musician(id):
@@ -190,7 +191,7 @@ def update_musician(id):
     return jsonify(message="Musician updated successfully", musician=musician_schema.dump(musician))
 
 
-# DELETE route endpot to delete musician from database
+# DELETE route endpoint. This route deletes a specified musician from the database, with the musician id provided in the URL.
 @musician.route("/<int:id>/", methods=["DELETE"])
 @jwt_required()
 def delete_musician(id):

@@ -1,4 +1,4 @@
-# This file contains miscellaenous functions that are used by various controllers in this application. 
+# This file contains miscellaneous functions that are used by various controllers in this application.
 from flask import abort
 from main import db
 from models.musicians import Musician
