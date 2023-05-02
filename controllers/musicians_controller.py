@@ -18,7 +18,7 @@ musician = Blueprint('musician', __name__, url_prefix="/musician")
 # GET ROUTES endpoints
 
 # Retrieves all songs from database. Admin excluded
-# If profession is specified in the URL, such as http://localhost:5000/musician/list?profession=Drummer, then it will return musicians with that specific profession. 
+# If profession is specified in the URL, such as http://localhost:5000/musician/list?profession=Drummer, then it will return musicians with that specific profession.
 @musician.route("/list", methods=["GET"])
 def get_musicians_by_profession():
     profession = request.args.get("profession")
@@ -56,7 +56,7 @@ def get_musicians_without_label():
     result = musicians_schema.dump(musicians_list)
     return jsonify(result)
 
- 
+
 # Retrieve all credits associated with a musician ID, where ID is provided in the URL.
 # Can also further filter the credits retrieved by contribution date in URL - example is: http://localhost:5000/musician/3/credits?contribution_date=2014
 @musician.route("/<int:musician_id>/credits", methods=["GET"])
@@ -135,7 +135,7 @@ def musician_register():
                     "access_token": access_token})
 
 
-# This route will login a musician in the application if correct email and password fields are provided in the request. JSON access token will also be returned once successful. 
+# This route will login a musician in the application if correct email and password fields are provided in the request. JSON access token will also be returned once successful.
 @musician.route("/login", methods=["POST"])
 def musician_login():
     musician_fields = request.json
