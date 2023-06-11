@@ -1665,9 +1665,6 @@ CREDITS (primary key: id, description, contribution date, foreign key: song_id, 
 
 ## R10
 
-# Shows significant planning for how tasks are planned and tracked, including a full description of the process and of the tools used
-# Describe the way tasks are allocated and tracked in your project#
-
 1. __Initial set up__
 
 Upon starting the API Webserver Project, the service Trello was used as the digital Kanban board for the project. Tasks were created, allocated and tracked using Trello. Time deadlines in terms of priority allocation was also a feature utilised for each of the cards created on the Trello Board - each card representing a task to be completed. Any ideas and notes were also commented and recorded on the Trello cards.
