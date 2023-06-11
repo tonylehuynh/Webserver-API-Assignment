@@ -1,6 +1,17 @@
 # TONY LE HUYNH - GCAB012201 - WEB SERVER API ASSIGNMENT
 
 
+To start the application, ensure that the .env file is adjusted.
+
+The below line of code needs to be changed according to the database details
+```
+DATABASE_URL="postgresql+psycopg2://postgres:123456@localhost:5432/postgres"
+```
+
+Once virtual environment is activate, run these commands in the terminal - flask db drop, flask db create and flask db seed in order to create and seed the database tables.
+
+Then run the command in the terminal - flask run - in order to run the application. 
+
 ## _R1_ 
 
 The problem being solved by this application is that of tracking song credits - in particular the collaborators on songs. 
@@ -10,6 +21,8 @@ Despite typically seeing only one artist's name tied to songs, the majority of s
 This shows that there are many people that are involved with seeing a song come to life, before the song even reaches the ears of the public. This also means that there are many people who will need to be included on the song's credits list, and also compensated accordingly in the form of fees or royalties. 
 
 As it can be difficult to keep track of all collaborators who were involved in a song, this particular API Web Server application will be of assistance. Users can register themselves as musicians, classified by the type of musician they are such a drummer or vocalist, and then record their contribution to a song. This application will help track all the collaborators on a song. Furthermore, a lot of musicians are associated with record labels (which adds to further complexity in terms of the splitting of payments as there can be many people such as lawyers and publicists on a label team), which is why record labels that musicians are associated with can be tracked on this application too. 
+
+Overall, the application will help solve how difficult it can be to keep track of a song's credits when there can be multiple collaborators on one song, across time. Therefore, the application will make it much more easy and convenient to track contributions/credits made to a song. 
 
 ## _R2_
 
@@ -29,9 +42,9 @@ Failure to properly financially compensate collaborators can result in legal iss
 
 Overall, it is important to keep track of collaborators in the making of songs in order to properly credit them both in writing and financially. The reason I have all this information is due to the fact that I've worked in the music industry myself and also have many friends in the music industry. 
 
-The making of a song can take months, let alone years for some songs. Many artists also travel or work online by sending files, resulting in collaborators potentially being from all across the world. In this time, things can become lost or forgotten. With the large amount of collaborators on songs, it can be very difficult to keep track of who worked on a song and what their contribution was. 
+The making of a song can take months, let alone years for some songs. Many artists also travel or work online by sending files, resulting in collaborators potentially being from all across the world. In this time, things can become lost or forgotten. Different collaborators could have different records of contributions, on different computers, in different studios across the world. With the large amount of collaborators on songs, it can be very difficult to keep track of who worked on a song and what their contribution was. 
 
-This is why these problems presented above, can be addressed through the building of this API Webserver Project - where the collaborators/credits for the song making process will tracked and recorded. 
+This is why these problems presented above, can be addressed through the building of this API Webserver Project - where the collaborators/credits for the song making process will tracked and recorded. The application will make the process of keeping a record of the credits + contributions easier and more efficient, in a central location. Musicians will be able to see what credits they have on songs. Record Labels associated with the musicians can also keep a track of this as well. And overall, all the credits/contributions for each song from different musicians, will easily be able to be recorded, tracked and shown.
 
 ## _R3_
 
@@ -93,17 +106,17 @@ The primary ORM tool that will be used for this API Webserver application will b
 
 _Data Modeling_
 
-An ORM such as SQLAlchemy can allow the structure of a database schema to be defined in the code of the application itself. This is a benefit as it the approach is more intuitive and flexible than writing raw SQL queries. For example with SQLAlchemy, tables and columns in the database schema can be defined as Python classes and attributes. This also makes it more convenient and easier to maintain the database, and make changes to the schema without having to directly modify the database (Reference 6).
+An ORM such as SQLAlchemy can allow the structure of a database schema to be defined in the code of the application itself. This is a benefit as it the approach is more intuitive and flexible than writing raw SQL queries. For example with SQLAlchemy, tables and columns in the database schema can be defined as Python classes and attributes. This also makes it more convenient and easier to maintain the database and its consistency, and make changes to the schema without having to directly modify the database (Reference 6). ORMs can also provide tools for validating the database schema and detect inconsistencies or errors in the schema definition. ORMs can also provide tools for managing cascading updates or deletes across related tables, thus further helping to maintain database integrity and consistency. 
 
 _Data Persistence_
 
-ORMs make it easier to persist data to the database, such as creating tables, seeding the tables with data and executing SQL queries. Developers are able to perform CRUD (Create, Read, Update, Delete) operations on the database through use of an ORM (Reference 7). Tables n a database are able to be created, modified and deleted through use of an ORM as well. 
+ORMs make it easier to persist data to the database, such as creating tables, seeding the tables with data and executing SQL queries. Developers are able to perform CRUD (Create, Read, Update, Delete) operations on the database through use of an ORM (Reference 7). Tables in a database are able to be created, modified and deleted through use of an ORM as well. 
 
 _Querying_
 
 A key functionality of an ORM such as SQLAlchemy, is that database queries are able to be written in the programming language of the application, such as Python, rather than writing SQL queries. Python code can be written for an application, and the ORM will generate the corresponding SQL queries and execute them and interact with the database(Reference 6). SQLAlchemy provides a database abstraction layer that allows developers to interact with databases using an object-oriented approach. Another way to describe this is that SQLAlchemy provides a SQL Expression Language, allowing complex SQL queries to be written using a Pythonic syntax. 
 
-ORMs such as SQLAlchemy also provide advanced querying capabilities. This includes tasks such as filtering, sorting and grouping data, as well as complex joins and subqueries (Reference 8). 
+ORMs such as SQLAlchemy also provide advanced querying capabilities, with complex queries involving multiple tables able to be handled. This includes tasks such as filtering, sorting and grouping data, as well as complex joins and subqueries (Reference 8). 
 
 When interacting with databases, ORMs such as SQLAlchemy also utilise a method called connection pooling. This is where existing database connections are reused rather than creating a new one, thus helping improve the performance and efficiency of applications interacting with database systems (Reference 8). 
 
@@ -113,11 +126,11 @@ _Relationships_
 
 An important aspect of relational databases are the relationships between tables in the database. An ORM provide a convenient way for these relationships between tables in the database to be defined and managed, which is especially important for data models with many-to-many or one-to-many relationships. ORMs allow you to define relationships between classes by defining attributes that reference other classes (Reference 7). 
 
-In particular with SQLAlchemy, database tables can be defined using Python classes and attributes, along with the relationships that tables can have between each other through the use of features such as primary and foreign keys (Reference 7).
+In particular with SQLAlchemy, database tables can be defined using Python classes and attributes, along with the relationships that tables can have between each other through the use of features such as primary and foreign keys (Reference 7). Relationships can also be defined through the db.Relationship function in SQLAlchemy, as well as the use of backref. 
 
 _Migrations_
 
-Database migrations can also be managed by ORMs, where the modification of the schema of a database over time without losing data is made easier. This is where code written in a programming language, such as Python in the example of using SQLAlchemy, can be written to make changes to the database schema and then executed to apply the changes to the overall database. ORMs can ensure that the integrity of the database is maintained and that data is not lost during the modifications made to the database schema (Reference 6).
+Database migrations can also be managed by ORMs, where the modification of the schema of a database over time without losing data is made easier. This is where code written in a programming language, such as Python in the example of using SQLAlchemy, can be written to make changes to the database schema and then executed to apply the changes to the overall database. ORMs can ensure that the integrity of the database is maintained and that data is not lost and errors are handled during the modifications made to the database schema (Reference 6).
 
 _Database and Web Framework Integration_
 
@@ -141,7 +154,7 @@ Depending on the ORM used, there can be a range of advanced features that are of
 
 _Scalability_
 
-An ORM can help optimise database queries and the number of database connections, through the use of methods such as connnection pooling (Reference 6). Thus, the performance application and load on the database server are improved and therefore the scalability of applications can be optimised through using ORMs. 
+An ORM can help optimise database queries and the number of database connections, through the use of methods such as connnection pooling (Reference 6). ORMs can also provide tools to assist wih distributing database load across multiple services. Thus, the performance application and load on the database server are improved and therefore the scalability of applications can be optimised through using ORMs. 
 
 _Testing_
 
@@ -150,19 +163,23 @@ The use of an ORM can make it easier to write and execute tests. This is because
 
 ## R5
 
-I have separated the endpoint documentation by the files: musicians_controller, labels_controller, songs_controller and credits_controller.
+The endpoint documentation for this API Webserver Application will be separated into the following categories, representing the files in the controller structure of the application: musicians_controller, labels_controller, songs_controller and credits_controller.
 
 
-Below are the steps for authentication. 
+Below are also the steps for authentication. 
 
 
 AUTHENTICATION 
 - Most of the updating/deleting in the database will be done by the Admin user only. 
-- Access token will be returned when logged in. Admin user details are below.
-- Access token can then be pasted into the Authorization header (I used Postman), in the Bearer Token section. 
+- An Access token will be generated and returned when a musician logs in. The Admin user details are below.
+- Access token generated, can then be pasted into the Authorization header of an API testing platform (I used Postman), in the Bearer Token section. 
+- This will allow you to be authenticated by the API application, and then be able to execute the HTTP verbs which are restricted to admin musician users only (typically updating and deleting queries.)
+
+To log in and authenticate as the admin musician user:
 
 - VERB: POST
 - URL: http://localhost:5000/musician/login
+- Admin musician user login details are:
 ```JSON
 {
     "email": "admin@admin.com",
@@ -180,6 +197,16 @@ Expected return output is:
 }
 ```
 
+Screenshot of how to paste access_token provided in the Authorization header (bearer token selection) section of Postman API Platform:
+
+
+![Authorisation Postman screenshot](./docs/Authorisation.jpg)
+
+
+Here is also a screenshot of how to provide raw JSON data in the Body, in order to provide the desired inputs. This will be useful to follow to provide the necessary information for things such as registering, adding and updating a new musician, song, credit, and label. 
+
+![Authorisation Postman screenshot](./docs/Authorisation_2.jpg)
+
 __MUSICIANS_CONTROLLERS ENDPOINTS__
 
 *GET ROUTES - HTTP VERB: GET*
@@ -188,14 +215,16 @@ __MUSICIANS_CONTROLLERS ENDPOINTS__
 - Verb: GET
 - URL route: http://localhost:5000/musician/list
 - No authentication
+- No need to provide any raw JSON data.
 - Expected response data: Shows list of all musicians in the database with their details (email, first_name, last_name, id, label_id, phone_number, profession). Admin user is excluded from this list
 
 **1.1** 
 
-Also able to filter by profession
+Also able to further filter by profession when geting a list of all musicians
 - Example URL route: http://localhost:5000/musician/list?profession=Singer
 - Verb: GET
-- Returns only musicians whose profession is "Singer". In the example seeded data, the musician id returned is 2 and name is Frank Ocean
+- Returns only musicians whose profession is "Singer". In the example seeded data, the musician id returned is 2 and name is Frank Ocean.
+- Other professions include "Drummer", "Rapper", "Songwriter", "Producer" etc. 
 
 Example return for where profession is = "Singer"
 ```JSON
@@ -328,11 +357,61 @@ Example return:
 
 **4.**
 - VERB: GET
-- URL route: http://localhost:5000/musician/\<\int:musician_id>/credits
+- URL route: 
+```
+http://localhost:5000/musician/<int:musician_id>/credits
+```
 - EXAMPLE URL: http://localhost:5000/musician/3/credits
 - No auth
 - Retrieves a musician by their ID, provided in URL, and then returns a list of all credits that the musician is associated with. The example for musician_id 3 returns Mike Dean, and they have 4 credits associated with them.
 
+Expected return for the example URL above
+```JSON
+{
+    "credits": [
+        {
+            "contribution_date": "2011-01-01",
+            "description": "Vocals, lyrics",
+            "id": 1,
+            "musician_email": "mike@email.com",
+            "musician_id": 3,
+            "song_id": 1,
+            "song_title": "Ivy"
+        },
+        {
+            "contribution_date": "2014-03-03",
+            "description": "Vocals, lyrics",
+            "id": 2,
+            "musician_email": "mike@email.com",
+            "musician_id": 3,
+            "song_id": 4,
+            "song_title": "911"
+        },
+        {
+            "contribution_date": "2015-01-01",
+            "description": "Vocals, lyrics",
+            "id": 3,
+            "musician_email": "mike@email.com",
+            "musician_id": 3,
+            "song_id": 5,
+            "song_title": "Biking"
+        },
+        {
+            "contribution_date": "2014-12-11",
+            "description": "Vocals, lyrics",
+            "id": 4,
+            "musician_email": "mike@email.com",
+            "musician_id": 3,
+            "song_id": 6,
+            "song_title": "Thinkin Bout You"
+        }
+    ],
+    "musician_name": "Mike Dean"
+}
+```
+
+
+**4.1**
 You can also filter by contribution_date(year). Intention is that the musician can search the credits they've done, and also provide the year in the URL, which returns the credits they did in a certain year
 
 - EXAMPLE URL: http://localhost:5000/musician/3/credits?contribution_date=2014
@@ -369,7 +448,10 @@ You can also filter by contribution_date(year). Intention is that the musician c
 
 **5.**
 - VERB: POST
-- URL route: http://localhost:5000/musician/register
+- URL route: 
+```
+http://localhost:5000/musician/register
+```
 - No auth
 - Will be required to supply information via Body, and raw JSON data
 - Provide data to register user. label_id by default is None, so if label_id isn't provided then the user will still be able to successfully register. Furthermore, if user provides a label_id that doesn't exist, then this will be flagged. 
@@ -411,7 +493,10 @@ It should return access token, email and message saying musician registered succ
 
 **6.**
 - VERB: POST
-- URL: http://localhost:5000/musician/login
+- URL: 
+```
+http://localhost:5000/musician/login
+```
 - Required data is the email and password. See below example for the admin user. Once again provided as raw JSON data in the body. 
 
 ```JSON
@@ -430,14 +515,14 @@ Returns the below as an example:
 ```
 
 *PUT ROUTE ENDPOINT - HTTP VERB: PUT*
-6.
+
+**7.**
 - verb: PUT
 - URL: 
 ```
 http://localhost:5000/musician//<int:id>/
 ```
-- Authentication is required. Needs to be access token of admin user. Provided as a bearer token in the Authorization header. 
-
+- Authentication is required in order to use this route to update a musician. Needs to be access token of admin user. Provided as a bearer token in the Authorization header. Further details for this included at the start of R5 in this README file. 
 
 
 - Access token will be returned when logged in. Admin user details are : verb: POST,  url: http://localhost:5000/musician/login
@@ -448,7 +533,7 @@ http://localhost:5000/musician//<int:id>/
 }
 ```
 
-- No data is required 100%, as I have coded it so that only the fields provided in the Body (raw JSON) will be be updated accordingly. As long as the fields provided matches the fields of the musician table, and the data inputs are in the correct format, then it will be updated successfully. 
+- No data is mandatorily required , as I have coded it so that only the fields provided in the Body (raw JSON) will be be updated accordingly. As long as the fields provided matches the fields of the musician table, and the data inputs are in the correct format, then it will be updated successfully. For example, if only the "phone_number" field is provided, then only "phone_number" will be updated for the musician. 
 
 - Here is an example of a JSON input I did to update Musician_ID = 9
 - URL: http://127.0.0.1:5000/musician/9
@@ -475,7 +560,7 @@ Data returned
     }
 }
 ```
-Here is an example input to test. Password and admin status can be updated as only the admin user can use this update PUT verb endpoint. 
+Here is another example input to test for the body raw JSON data. Password and admin status can be updated in this HTTP PUT method, as only the admin user can use this update PUT verb endpoint. 
 ```JSON
 {
     "first_name": "Update",
@@ -494,7 +579,7 @@ Here is an example input to test. Password and admin status can be updated as on
 **7.**
 
 - verb: DELETE
-- Authorization is required in order to delete musician. Bearer token needs to be provided in the Authorization header. Admin user details and login details are found above, to get access token. 
+- Authorization is required in order to delete musician. Bearer token needs to be provided in the Authorization header. Admin user details and login details are found above, to get access token (as well as the start of R5 in this README doc)
 - Required data is simply just the URL provided. No need for JSON data in the body.
 URL format is
 ```
@@ -528,7 +613,11 @@ __LABELS_CONTROLLERS ENDPOINTS__
 
 **1.** 
 - Verb: GET
-- URL is http://localhost:5000/labels
+- URL is
+```
+ http://localhost:5000/labels
+ ```
+- No auth required or raw JSON data in the body. 
 - Expected response data is below:
 
 ```JSON
@@ -1037,22 +1126,542 @@ Expected return response data:
 }
 ```
 
+*POST ROUTE ENDPOINTS - HTTP VERB: POST -> THIS IS FOR CREATING NEW SONG CREDITS*
+
+**9.** 
+- Verb: POST
+- URL is
+```
+http://localhost:5000/songs/<int:id>/credit
+```
+- You are not required to be an admin in order to create a new credit, however you do need to login as a musician and provide your access token (in authorization header as a bearer token)
+- To login and provide authentication as musician "Admin", simply follow the steps provided at the start of the R5 section. 
+
+- Required input data in the body using raw JSON. The required fields are "description" which is associated with a string value, and "contribution_date" which is associated with a date value.
+
+- If the credit already exists, then the credit will simply be updated according to the values provided. 
+
+Below is an example where I have logged in as musician_id = 2. I used the access token provided after I logged in and pasted it into the bearer token section of the Authorization header. 
+
+And then I have added a new credit to song_id = 3. 
+
+URL used for example - http://localhost:5000/songs/3/credit
+
+Example input data:
+
+```JSON
+{
+    "description": "Added a new credit. Played trumpet on this song",
+    "contribution_date": "2023-02-02"
+}
+```
+
+Expected return response data:
+```JSON
+{
+    "credit": {
+        "contribution_date": "2023-02-02",
+        "description": "Added a new credit. Played trumpet on this song",
+        "id": 17,
+        "musician_email": "frank@email.com",
+        "musician_id": 2,
+        "song_id": 3,
+        "song_title": "Suede"
+    },
+    "message": "Credit for song created successfully"
+}
+```
+
+__CREDITS_CONTROLLERS ENDPOINTS__
+
+*PUT ROUTE ENDPOINTS - HTTP VERB: PUT*
+
+**1.** 
+- Verb: PUT
+- URL is
+```
+http://localhost:5000/credits/<int:id>/
+```
+- You will be required to be authorized as an admin user in order to update credits. To login and provide authorization as admin, please refer to the instructions listed at the top of the R5 section. You will need to login as the admin musician, and then copy the access token provide, then paste it into the Authorization header as a bearer token.
+
+- No fields are mandatory in the body as raw JSON data. Only the fields provided will be updated accordingly for credits. For example, if only the "description" field is provided, then the description of the credit will be updated only. 
+
+Example where I updated the description of the credit_id = 3
+
+Example URL used -> http://localhost:5000/credits/3
+
+Example input data
+```JSON
+{
+    "description": "Updated credit. I did the drums",
+    "contribution_date": "1999-11-11"
+}
+```
+Expected return data:
+```JSON
+{
+    "credit": {
+        "contribution_date": "1999-11-11",
+        "description": "Updated credit. I did the drums",
+        "id": 3,
+        "musician_email": "mike@email.com",
+        "musician_id": 3,
+        "song_id": 5,
+        "song_title": "Biking"
+    },
+    "message": "Credit updated successfully"
+}
+```
+
+
+*DELETE ROUTE ENDPOINTS - HTTP VERB: DELETE*
+
+**2.** 
+- Verb: DELETE
+- URL is
+```
+http://localhost:5000/credits/<int:id>/
+```
+- You will be required to be authorized as an admin user in order to delete credits. To login and provide authorization as admin, please refer to the instructions listed at the top of the R5 section. You will need to login as the admin musician, and then copy the access token provide, then paste it into the Authorization header as a bearer token.
+
+- No fields are mandatory in the body as raw JSON data. Only need to provide URL indicating the credit_id to be deleted.
+
+Example where I deleted credit_id = 6
+
+Example URL used -> http://localhost:5000/credits/6
+
+Expected return data:
+```JSON
+{
+    "credit": {
+        "contribution_date": "2014-12-11",
+        "description": "Songwriting",
+        "id": 6,
+        "musician_email": "steve@email.com",
+        "musician_id": 5,
+        "song_id": 6,
+        "song_title": "Thinkin Bout You"
+    },
+    "message": "Credit deleted successfully"
+}
+```
 
 ## R6
 
-dasds
+Below are the final ERD diagrams for this API Webserver application. 
+
+![ERD](./docs/ERD_final.jpg)
+
+![ERD](./docs/ERD_final2.jpg)
+
+The third-party website Diagrams.net was used to create the ERD. 
+
+It can be seen in this ERD that there are 4 relations: Musicians, Labels, Credits and Songs
+
+Initially (as shown in R10), there were relations for Samples and Projects as well. After feedback from the instructors, I decided to remove these to reduce redudancy and complexity for the application. For future development of the application, a Samples relations can certainly be added (which represents any samples that were used in a song that need to be credited).
+- Along with this, I found that the "Genre" column of the Songs relation could have been separated into it's own relation, thus further normalizing the database. However due to time constraints, I decided against doing this for the time being.
+- The same could also be said for the "type" column of the Label relations. Another relation could have been created to further normalise the database, with the relation representing label "types" (such as Indepedent, Major etc.) Once again, due to time constraints I decided against doing this. 
+
+Here is the database schema in written form, with the relations being capitalised:
+
+LABELS (primary key: id, name, type)
+
+MUSICIANS (primary key: id, first_name, last_name, profession, phone_number, email, password, admin, foreign key: label_id)
+
+SONGS (primary key: id, title, genre, duration, date_finished)
+
+CREDITS (primary key: id, description, contribution date, foreign key: song_id, foreign key: musician_id)
+
+It can be seen that there is a one to many relationship between LABELS and MUSICIANS
+
+- This relationship is implemented through the foreign key constraint in the MUSICIANS table which references the primary key of the LABELS table. Each musician can only be associated with only one label (a musician is not required to have a label). while each label can have multiple musicians associated with it (a label is not required to have musicians).
+
+There is a many to many relationship between MUSICIANS and SONGS. A musician can have many songs, and a song can have many musicians. Due to this many to many relationship, a separate CREDITS relation was created to represent this.
+
+There is a one to many relationship between MUSICIANS and CREDITS
+
+- This relationship is implemented through a foreign key constraint in CREDITS table which references the primary key of MUSICIANS table. This means that each musician can have multiple credits associated with them, while each credit can be associated with only one musician.
+
+There is a one to many relationship between SONGS and CREDITS
+
+- This relationship is implemented through a foreign key constraint in CREDITS table which references the primary key of SONGS table. This means that each song can have multiple credits associated with it, while each credit can be associated with only one song.
+
+All the above relationships are implemented using a foreign key constraint, which enforces data integrity and ensures that only valid data can be inserted into the database. In addition, the ERD also shows that each table has its own primary key, which uniquely identifies each record in the table.
 
 ## R7
 
-dasds
+Here are various third-party services that were used in this API webserver application:
+
+1. Postman:
+
+Postman is a standalone third-party API platform which is used to build, test, monitor and document APIs (Reference 11). Developers essentially use Postman to test HTTP verbs, where Postman's user-friendly Graphical Interface is an excellent tool for sending and viewing HTTP requests and responses. All the various type of HTTP requests such as GET, POST, PUT and DELETE can be made with Postman, with conversion between the API and code written in programming languages such as JavaScript, Python and JSON format is handled (Reference 10). Postman also offers a comprehensive set of tools to assist accelerate the API lifecycle - such as design, testing, documentation and mocking. It acts as an API repository where a developer team can collaborate and access the API on one central platform (Reference 10). Furthermore, Postman can help improve the qualities of APIs through setting governance rules ensuring that APIs are built, designed and tested meeting organisation standards (Reference 10). 
+
+Postman was used as the third-party API platform of choice for this Webserver API Application, in order to test and monitor the API. 
+
+2. PostgreSQL:
+
+PostgreSQL is an open-source object-relational database management system (Reference 4). Due to it's widespread popularity in the industry, robust features, authentication and authorisation features available as well as the fact that use of PostgreSQL is free - PostgreSQL was used as the relational database management system of choice for this API Webserver Application.
+
+3. Psycopg2:
+
+Psycopg2 is considered the most widely used PostgreSQL database adapter for the Python programming language, allowing Python applications to communicate with the PostgreSQL database (Reference 12). It is an open-source third-party external software package.Psycopg2 was designed for applications that needed to perform various database operations, such as inserting, updating and deleting records from the tables in the database. Pyscopg2 is used to enable the execution fo SQL queries against the database, and retrieve the resutls of those queries (Reference 12).
+
+Because PostgreSQL was used as the relational database of choice for the API webserver application, Psycopg2 was integral for the functioning of the application by facilitating interaction with PostgreSQL. 
+
+4. autopep8:
+autopep8 is a third-party Python package which automatically formats Python code to comply with the Pep 8 style guidelines (Reference 12). The reason this was used in the Webserver API Application was for convenience, as PEP 8 is the official style guide and convention for Python code. With the Webserver API Application being written in Python and using Flask, autopep8 helped automate the process of formatting Python code to conform to the PEP 8 style guidelines, thus helping save time and ensuring code consistency in the application (Reference 12).
+
+5. Flask:
+Flask is a third-party Python web framework. It provides tools and libraries to assist with developing web applications (Reference 13). Flask is based on the Werkzeg WSGI toolkit and the Jinja2 template engine.
+
+Flask is considered lightweight, flexible and easy to learn. Other advantages of using flask are that it's easy to set up. Flask has an intuitive API, and also provides a built-in development server - thus making it easy to test and debug applications (Reference 14).
+
+It is also easy to add new functionality to applications through use of Flask extensions. There are various extensions available for Flask, which include extensions for database integration, authentication and API development (Reference 14). Flask is also compatible with many other Python libraries and tools. There is a large and active community around Flask, resulting a wide number of resources, documentation, tutorials and forums available for learning and troubleshooting (Reference 13). 
+
+All these benefits reveal why Flask was a suitable choice for use in this API Webserver Application. 
+
+6. Flask-SQLAlchemy:
+
+SQLAlchemy is an ORM (Objet-Relational Mapping) library providing a simple interface for interaction with databases, through providing the full extensibility of SQL (Reference 8). The benefit of an ORM, especially SQLAlchemy, is that Python language can be used for database interactions and queries as opposed to having to use SQL. This offers more flexibility for applcations. Flask-SQLAlchemy is a third-party Flask extension that was installed, which adds support for SQLAlchemy. Flask-SQLAlchemy helps simplify the use of SQLAlchemy with Flask, through setting up common objects and patterns for using those objects (Reference 8). The use of SQLAlchemy was very important for the API Webserver Application, showing how the Flask-SQLAlchemy third-party extension was of great benefit. 
+
+7. Marshmallow:
+
+Marshmallow is a third-party ORM/ODM/framework-agnostic Python library (Reference 15). It is used for it's powerful serialisation and deserialisation capabiltiies, and for converting complex datatypes, such as objects, to and from JSON, native Python datatypes and other formats (Reference 15). In this application, Python objects could be converted to JSON strings, and incoming JSON data could be deserialised and converted back into Python objects. This is why Marshmallow was so useful in this application in the management of data within the Webserver Application (Reference 15). 
+
+In this Webserver API Application, Marshmallow helped in the defining of the schemas for the data models, thus ensuring that the incoming data for the API was in the expected format and contained all the required fields (Reference 15).  This helped to prevent errors and maintain data integrity. SQLAlchemy is another third-party service that was used in the API Webserver Application. The benefit of using Marshmallow was that Marshmallow has great integration with SQLAlchemy, whhere SQLAlchemy model objects could easily be serialised and deserialised using Marshmallow (Reference 15). Once again, Marshmallow benefits include how it made the interaction with data and a database much easier for the APi Webserver Application. 
+
+8. Marshmallow-SQLAlchemy:
+
+As detailed in the above section, Marshmallow is easily integrated with SQLAlchemy. Marshmallow-SQLAlchemy is a third-party Marshmallow extension that was installed, which provided serialisation and deserialisation of SQLAlchemy database models to and from JSON and other formats. This was especially important in this Webserver API Application due to the extensive use of SQLAlchemy. 
+
+9. Flask-Marshmallow:
+
+As detailed in the documentation, Flask-Marshmallow is an integration layer for Flask and Marshmallow (Reference 16). It adds additional features to Marshmallow, including URL fields for APIs, as well as integrating with Flask-SQLAlchemy (Reference 16.) Flask-Marshmallow is a third-party extension that was used in this APi Webserver Application, due to its integration with both Flask and Marshmallow. 
+
+10. Flask-Bcrypt:
+
+Flask-Bcrypt is a third-party Flask extenstion which provides bcrypt hashing utilities for applications (Reference 12). As a password-hashing function, Flask-Bcrypt helps add an important layer of security for the API Webserver Application, by protecting sensitive data such as passwords (Reference 12). Flask-Bcrypt is great as well as it is easily integrated with Flask applications due to it being a Flask extension, thus making it simple to encrypt passwords and other sensitive data. 
+
+11. Flask-JWT-Extended:
+
+Flask-JWT-Extended is a third-party Flask extension that was used to add an authentication layer to the Webserver API Application. This extension provides support for JSON Web Tokens (JWTs) in Flask applcations, such as in the case for generating and verifying JWTs as well as token revocation and expiration (Reference 12). Flask-JWT-Extended is an important service that was utilised as authentication is another key component to creating security for the Webserver API application. JWTs can be used for authentication to protect routes and Flask-JWT-Extended simply made it easier for the application to work with JWTs (Reference 12).
+
+12. VSCode:
+
+Visual Studio Code (VSCode) is a source code editor that is available for Windows, macOS and Linux (Reference 17). It has a large number of extensions for programming languages such as Python. This is why VSCode was used as the code editor environment to write the code for this Flaks API Webserver Application.
+
+13. Github:
+
+Github is a website and cloud-based repository hosting service where developers and store, manage, track and control changes to their code (Reference 18). Github is used for Version control and Git. Github was used as a third-party service in development of this Flask Webserver API application, where the code was pushed to the repository provided by Github, to be stored and tracked. 
+
+14. SQLAlchemy:
+
+SQLAlchemy is a Python SQL toolkit and Object Relational mapper (Reference 8). It provides the functionalities and flexibilities of SQL, allowing efficient database interaction while being adapted into the Python programming language. Classes can be mapped to the database, which allows the object model and database schema to be developed through use of SQLAlchemy. SQLAlchemy is a third party service that was used for this API Webserver Application
+
+15. datetime:
+
+Datetime is a built in module in Python, which provides classes for working with dates and times. This allowed for functions to be developed in the application to ensure that the input data was correctly stored in time and date format in the database. 
 
 ## R8
 
-dasds
+The four relations in the database for the API Webserver application are: Labels, Credits, Musicians, Songs.
+
+These database relations were represented in the application as Models (Label, Credit, Musician, Song). 
+
+In this API Webserver Application, SQLAlchemy was used which is a Python SQL toolkit and Object-Relational Mapping (ORM library) (Reference 8). The benefit of using SQLAlchemy is that it allows Python classes to be defined, which represent database tables. These Python classes can then be used to interact with the database in a more Pythonic way. 
+
+The 'db.Model' class is a base class provided by SQLAlchemy for creating Python classes which represent database tables. A set of attributes and methods are provided, which allows for the structure of the database tables to be defined. As an example, 'db.Column' can be used to define the columns of tables, and 'db.relationship' can define the relationships between tables.
+
+
+**Label Model**
+
+Below is the application code for the Label model, which represents the Labels relation in the database.
+
+```Python
+class Label(db.Model):
+    __tablename__ = "labels"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(), nullable=False)
+    type = db.Column(db.String(), nullable=False)
+```
+
+It can be seen that the Label model is defined using the db.Model class, where the database table represented has the name "labels". There are three columns in the table, as shown by the db.Column class. 
+
+- The first column is called id, and is the primary key for the table and stores an auto-incrementing integer value. 
+
+- The second column is name, and stores a string value and is not able to be nullable meaning that a value must be provided for this column entry. 
+
+- The last column is called type, and it also stores a string value and is not nullable.  
+
+**Credit Model**
+
+Below is the application code for the Credit model, which represents the Credits relation in the database. 
+
+```Python
+class Credit(db.Model):
+    __tablename__ = "credits"
+
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(), nullable=False)
+    contribution_date = db.Column(db.Date())
+
+    song_id = db.Column(db.Integer, db.ForeignKey("songs.id"), nullable=False)
+    musician_id = db.Column(db.Integer, db.ForeignKey(
+        "musicians.id"), nullable=False)
+```
+
+It can be seen that the Credit model is defined using the db.Model class, where the database table represented has the name "credits". There are five columns in the table, as shown by the db.Column class. 
+
+- The first column is called id, and is the primary key for the table and stores an auto-incrementing integer value. 
+
+- The second column is description, and stores a string value and is not able to be nullable meaning that a value must be provided for this column entry. 
+
+- The third column is contribution_date, and stores a date value. An entry for this column is not required.
+
+- The last two column are song_id and musician_id and are both foreign key constraints. They both are not able to be nullable, meaning that a value must be provided for these two columns for the credits table. This is due to the fact that a credit cannot exist without a musician and song associated with it.
+
+- These foreign keys highlight what is shown in the ERD for this application and database. There is a many to many relationship between musicians and songs. This resulted in the credits table having to be made. There is a one to many relationship between musicians and credits, where a credit must have one musician and a musician can have none or many credits associated. There is a one to many relationship between songs and credits, where a credit must have one song, and a song can have none or many credits associated.
+
+- the song_id column as a foreign key in the credits table, references the primary key of the songs table. This is shown by ```db.ForeignKey("songs.id")``` where the id column of the songs table is referenced. 
+
+- the musician_id column as a foreign key in the credits table, references the primary key of the musicians table. This is shown by ```db.ForeignKey("musicians.id")``` where the id column of the musicians table is referenced. 
+
+The Credit model has foreign key relationships with both the Song and Musician models via the song_id and musician_id foreign keys. This allows for easy querying of credits for a given song or musician. A single credit belongs to only one song and only one musician, but each song and musician can have multiple credits.
+
+
+**Musician Model**
+
+Below is the application code for the Musician model, which represents the Musicians relation in the database.
+
+```Python
+class Musician(db.Model):
+    __tablename__= "musicians"
+    
+    id = db.Column(db.Integer,primary_key=True)
+    first_name = db.Column(db.String(), nullable=False)
+    last_name = db.Column(db.String(), nullable=False)
+    profession = db.Column(db.String(), nullable=False)
+    phone_number = db.Column(db.String(), nullable=False)
+    email = db.Column(db.String(), nullable=False, unique=True)
+    password = db.Column(db.String(), nullable=False)
+    admin = db.Column(db.Boolean(), default=False)
+    label_id = db.Column(db.Integer, db.ForeignKey("labels.id"), default=None)
+
+    credits = db.relationship(
+        "Credit",
+        backref="musician",
+        cascade="all, delete"
+    )
+```
+
+It can be seen that the Musician model is defined using the db.Model class, where the database table represented has the name "musicians". There are nine columns in the table, as shown by the db.Column class. 
+
+- The first column is called id, and is the primary key for the table and stores an auto-incrementing integer value. 
+
+- The next columns are first_name, last_name, profession, phone_number, email and password. These columns store string values are not able to be nullable meaning that a value must be provided for this column entry. 
+
+- The email column also has a unique=True attribute meaning that any email entries into the database for the musicians table must be unique. 
+
+- The next column is admin and this stores a boolean value where the default is False. Only musicians who have this admin column entry as True, are able to act as admin users in the database. 
+
+- The last column is label_id. This has a default as None, due to the fact that not every musician has to be associated with a label, hence they will need to provide a label_id when registering if they are associated with one. label_id is a foreign key constraint which references the "labels" table's primary key which is called "id", as shown by ```db.ForeignKey("labels.id")```. This column stores an integer value. This label_id field in the Musician model as a foreign key referencing the id field in the Label model, represents the relationship between the two models. A single musician can only have one associated label, whereas each label can have multiple associated musicians - showing the one-to-many relationship between Muscian and Label. 
+
+Another aspect to note in the model is this specific section of code
+
+```Python
+credits = db.relationship(
+        "Credit",
+        backref="musician",
+        cascade="all, delete"
+    )
+```
+db.relationship is an attibute used to define a relationship between two tables. In this case, a one-to-many relationship is defined between the Credit and Musician models. Each credit is associated with one musician, and each musician can have multiple credits. This was also explained previously, where the Credit model itself has the foreign key "musician_id" which references the primary key "id" column of the Musician model. 
+
+The backref attribute is used to create a bi-directional relationship betwen two tables/models - credits and musicians. This allows birectional querying. With the setting backref="musician" in the Credit model, SQLAlchemy automatically creates a credits attribute on the Musician model, which allows you to access all of the credits associated with a particular musician through musician.credits. 
+
+The cascade attribute is used to specify how changes to one table should be propagated to related tables. In this example, cascade="all, delete", meaning that if a musician is deleted, all of their associated credits should also be deleted. This is useful to ensure that the database remains consistent with no orphaned records that are no longer associated with anything - further highlighting how a credit must be associated with one musician. 
+
+**Song Model**
+
+Below is the application code for the Song model, which represents the Songs relation in the database.
+
+```Python
+class Song(db.Model):
+    __tablename__= "songs"
+
+    id = db.Column(db.Integer,primary_key=True)
+    title = db.Column(db.String(), nullable=False)
+    genre = db.Column(db.String(), nullable=False)
+    duration = db.Column(db.Time())
+    date_finished = db.Column(db.Date())
+
+    credits = db.relationship(
+        "Credit",
+        backref="song",
+        cascade="all, delete"
+    )
+```
+
+It can be seen that the Song model is defined using the db.Model class, where the database table represented has the name "songs". There are five columns in the table, as shown by the db.Column class. 
+
+- The first column is called id, and is the primary key for the table and stores an auto-incrementing integer value. 
+
+- The second column is title, and stores a string value and is not able to be nullable meaning that a value must be provided for this column entry. 
+
+- The third column is genre, and stores a string value and is not able to be nullable meaning that a value must be provided for this column entry. 
+
+- The fourth column is duration and stores a time value. It is able to be nullable which means a value isn't necessary for this column entry.
+
+- The last column is called date_finished, and it stores a a date value, and is also able to be nullable which means a value isn't necessary for this column entry.
+
+Another aspect to note in the model is this specific section of code:
+
+```Python
+credits = db.relationship(
+        "Credit",
+        backref="song",
+        cascade="all, delete"
+    )
+```
+db.relationship is an attibute used to define a relationship between two tables. In this case, a one-to-many relationship is defined between the Credit and Song models. Each credit is associated with one song, and each song can have multiple credits. This was also explained previously, where the Credit model itself has the foreign key "song_id" which references the primary key "id" column of Song model. 
+
+The backref attribute is used to create a bi-directional relationship between two tables/models - credits and songs. This allows birectional querying. With the setting backref="song" in the Credit model, SQLAlchemy automatically creates a credits attribute on the Song model, which allows you to access all of the credits associated with a particular song through song.credits. 
+
+The cascade attribute is used to specify how changes to one table should be propagated to related tables. In this example, cascade="all, delete", meaning that if a song is deleted, all of their associated credits should also be deleted. This is useful to ensure that the database remains consistent with no orphaned records that are no longer associated with anything - further highlighting how a credit must be associated with one song. 
+
+The relationships shown between all the models allow for the efficient querying of data based on the associations between them. All of this is done through the use of foreign keys as well as the db.relationship function. For example, you can easily find all credits for a given song by accessing the credits field of that song, or you can find all songs credited to a given musician by accessing the credits field of that musician and then accessing the song field of each credit.
+
+The models in the application also make use of appropriate model methods for querying on self and its relationships. For example, you can use the query method of the Song model to retrieve all songs, the filter_by method of the Song model to filter songs based on a specific condition, and the join method of the Credit model to join the Song and Musician tables to retrieve all songs credited to a given musician.
+
 
 ## R9
 
-dasds
+The four main database relations that were implemented in the application are as follows:
+- Labels
+- Musicians
+- Credits
+- Songs
+
+
+**Labels**
+
+The main purpose of this API Webserver application is to track the credits and contributions that musicians have made on songs. Labels represent Record Labels, as many musicians are associated with labels (this is also relevant as when things such as financial distribution of song royalties are decided, whether a musician is associated with a label will affect this as well). 
+
+In terms of the Labels relation, there are three columns which are the id as the primary key, the name of the label which is stored as a string, and the type of label which is also in string format. The id for this relation is an auto-incrementing integer value. The id as the primary key is to uniquely identify each entry in the Labels relation. 
+
+There were considerations to include further columns such as label contact phone number, as well as country that the label is from, however these were decided not to be included to reduce complexity. Furthermore, the minimum viable product for the application is mainly focussed on the credits, songs and musicians. The label name would be things such as "Warner Records" and "Sony Records". The label type would represent things such as whether the Label is "Major" or "Independent". 
+
+As mentioned previously, it was up for consideration whether to separate the Label "type" into it's own relation, thus further normalising the table. This relation would store all the types of labels. However once again to reduce complexity of the application for it's initial development, this was route was not taken. 
+
+**Musicians**
+
+The next database relation was for Musicians. For this particular API Webserver Application, Musicians represented the "users" of the application, where musicians could register, login and add their credits to songs. The columns for the Musicians relation are as follows:
+- id (Primary key)
+- first_name 
+- last_name 
+- profession
+- phone_number
+- email
+- password
+- admin
+- label_id (Foreign key)
+
+The id column representing the Primary key of the Musicians relation is formatted as an auto-incrementing integer value. The primary key is in place to uniquely identify each entry in the Musicians relation. The admin column is stored as a boolean value. This is important for the application as only Musicians who had an admin value as "true" were able to execute queries such as deleting and updating other relations. This is a further layer of security to prevent other musician users being able to delete other musicians and damage the database structure. 
+
+**Musician to Label relationship**
+
+The label_id column is a foreign key constraint in the Musicians table, which references the primary ky of the Labels table. 
+
+- This is because there is a One-to-many relationship between Labels and Musicians. 
+
+Each musician can only be associated with one label, while each label can have multiple musicians associated with it. The relationship isn't mandatory on both ends, as a musician can be added to the database without having a label (representing a real world scenario as not all musicians are associated with a label), and a label can be added to the database without being associated with musicians. The structure of the database in the application was implemented with this relationship in mind. 
+
+All other columns in the Musicians relation were stored as string values. Initially, phone_number was stored as an integer value, however after some research it was found that it was best to store phone_number as a string value as not all phone numbers contain only integers. The profession column would represent the professions of the musicians, which includes things such as singer, songwriter, engineer, producer, guitarist, drummer etc. As each musician was essentially a "user" within the application that could register and login, a password column was included (this was encrypted in the application through Flask-Bcrypt). When a musician logged in to the application, they would provide their email address and password in order to receive their access token. 
+
+The name of the musician was stored in separate columns first_name and last_name so that it'd be easier to search for musicians in the future. Other columns such as phone_number and email were important to include to record the musician's contact details. 
+
+In order to register a musician in the application, the columns first_name, last_name, profession, phone_number, email and password were required to be provided - therefore not nullable. The admin column could only be changed by only other musicians users who were admins. The label_id was not required to be provided, where the default was None, as not all musicians are associated with labels. If a label was deleted from the database, and the musician had a foreign key in it's table that referenced the deleted label, then once the label was deleted the column would simply be set to None. 
+
+**Songs**
+
+The next database relation is Songs. The columns for the Songs relation are:
+- id (Primary key)
+- genre
+- duration
+- date_finished
+
+id is once again an auto-incrementing integer value that represented the primary key to uniquely identify each row in the Songs relation. Genre is stored as a string value, representing a song's genre (such as RNB, Rap, Pop, Country etc). Duration represented how long a song was, and was stored as a time value HH:MM:SS (e.g. 00:03:20). Date_finished represents the date the song was finished, and was stored as a time value YYYY-MM-DD (e.g. 2023-03-01).
+
+When creating a new Songs relation entry in the database, the mandatory fields were title and genre. Duration and date_finished were not mandatory to include. 
+
+Other ideas for columns in the Songs relation included BPM, Key signature etc. However due to time constraints for a minimum viable product, these were not included. The main function of the app is ensure that a song is properly identified (via it's name, genre and id), and the credits that are associated with the song. 
+
+There was also the idea to further normalise the Songs relation and have the column "genre" separated as it's own Genre relation. This relation would store all the possible genres in the database. However due to time constraints and keeping things simple for the MVP of the application, this was not implemented. 
+
+**Relationship between Songs and Musicians**
+
+There is a many-to-many relationship between Songs and Musicians relations. It was implemented so that one song could have many musicians associated with it, and one musician could have many songs associated with them. Because of this many-to-many relationship between Songs and Musicians, a separate Credits relation was required to be created. 
+
+**Credits**
+
+The last database relation is Credits. The columns for the Credits relation are:
+- id (Primary key)
+- description
+- contribution_date
+- song_id (foreign key)
+- musician_id (foreign key)
+
+The id column for the Credits relation is an auto-incrementing integer value, that represents the primary key to uniquely identify each row in the Credits relation. Description is stored as a string value, and represents the Musician's credit for a song e.g. played drums, sung vocals, wrote the lyrics etc. The contribution_date represents the date that the Musician made the contribution to the song, and is stored as a date value YYYY-MM-DD (e.g. 2023-03-01).
+
+The Credits table has two foreign key constraints. The song_id column references the primary key (id) of the Songs relation, and the musician_id column references the primary key (id) of the Musicians relation. 
+
+The song_id and musician_id columns are mandatory required fields for the Credits table, as a Credit cannot exist without a musician or song associated with it. 
+
+**Relationship between Credits and Musicians**
+
+There is a one-to-many relationship between the Musicians and Credits relations. 
+
+This relationship is implemented through a foreign key constraint in CREDITS table which references the primary key of MUSICIANS table. This means that each musician can have multiple credits associated with them, while each credit can be associated with only one musician.
+
+It is mandatory that a credit has to be associated with a musician, however it is not mandatory for a musician to be associated with a credit. If a musician was deleted from the database, it's associated credits would also be deleted. A credit being deleted from the database would not delete the associated musician. 
+
+**Relationship between Credits and Songs**
+
+There is a one-to-many relationship between the Songs and Credits relations. 
+
+This relationship is implemented through a foreign key constraint in CREDITS table which references the primary key of SONGS table. This means that each song can have multiple credits associated with it, while each credit can be associated with only one song.
+
+It is mandatory that a credit has to be associated with a song, however it is not mandatory for a song to be associated with a credit. If a song was deleted from the database, it's associated credits would also be deleted. A credit being deleted from the database would not delete the associated song. 
+
+**Overview of relationships**
+
+The three main relationships were:
+
+1. A one-to-many relationship between Labels and Musicians
+
+And because of the many-to-many relationship between Musicians and Songs, the separate Credits relation was created.
+
+2. A one-to-many relationship between Musicians and Credits
+3. A one-to-many relationship between Songs and Credits. 
+
+These relationships are shown in the ERD. 
+
+A song can have many credits, and a credit can belong to only one song and one musician.
+A musician can have many credits, and a credit can belong to only one song and one musician.
+A label can have many musicians, and a musician can belong to only one label.
+
+All the relationships between the database relations were implemented using a foreign key constraint, which enforces data integrity and ensures that only valid data can be inserted into the database. In addition, the ERD also shows that each table (relation) has its own primary key, which uniquely identifies each record in the table.
+
+*This is also the relational model in written form:*
+
+LABELS (primary key: id, name, type)
+
+MUSICIANS (primary key: id, first_name, last_name, profession, phone_number, email, password, admin, foreign key: label_id)
+
+SONGS (primary key: id, title, genre, duration, date_finished)
+
+CREDITS (primary key: id, description, contribution date, foreign key: song_id, foreign key: musician_id)
 
 ## R10
 
@@ -1065,6 +1674,16 @@ Upon starting the API Webserver Project, the service Trello was used as the digi
 
 This is the link to the Trello Board for the project - https://trello.com/invite/b/LKKBjbPd/ATTI6453a42b8281317a5030cb78578f7cad0577A38A/webserver-api-assignment
 
+
+Agile methodology was used to help with the development of this project. All the tasks in this API Webserver application were broken into smaller tasks. Though because this project was coded in an educational environment as opposed in the industry, the traditional approach of using 2 week sprint cycles was not used. Instead, the concept of daily standups were used. Where at the start of each day there would be a review of the tasks that were completed, and the ones that needed to be completed. With these regular review intervals, the completion and development for the Application was able to be kept on track and managed.
+
+The first step of the project was the brainstorming of ideas for the API Webserver application. A user-centric approach was taken to ensure the usefulness of the API webserver application to solve the intended problem. The initial requirements of the project were - to settle on an idea, create an ERD for the database, get the idea approved by the instructors and note any features that needed to be implemented for the project. Trello was used, where a cards on the Kanban Board were useful for commenting all the ideas and tasks that were part of the brainstorm and planning. 
+
+Once all the requirements of the project were defined, all the smaller manageable tasks of the project were broken down. Cards were created using the Trello Kanban board, with each card representing a task to be completed for the Webserver API application. Trello allowed for easy visualisation to see all the tasks that needed to be completed, and had already been completed.
+
+A To Do, and Backlog/Initial project discussion columns were created to store all the tasks that needed to be completed but had not yet been started on. An In-progress column was created on the Trello board to store the list of tasks that were currently being worked on for the day (a day representing a very small sprint cycle). A done column was also implemented to contain the list of tasks that had already been completed. This allowed for easy visualisation of what tasks were already down, and also made it easy to revisit any previously completed tasks. The approach of making and prioritising tasks was based on esnuring the essential features of the application and project were to be completed - ensuring a minimum viable product of the project to be done. These would include the coding of the application as well as the requirements documentation of the project. Each task also represented a specific feature or functioality of the application - such as the commands file to create, seed and drop the database tables, the schemas files, the models files and the controller files. Separate tasks were also created for each specific documentation requirement - e.g. documentation of the API endpoints, explanation of the ERD, explanation of the chosen database system etc. 
+
+As stated before, daily standups were held for reflection and review of the previous day's work as well as to refresh on what tasks needed to completed for the project. This included opening the Trello Board and reviewing what tasks were in progress, and what tasks were already completed.  
 
 Below is a screenshot of the initial Trello board that was set up, including the tasks that were created and moved to In progress or Done. 
 
@@ -1120,7 +1739,7 @@ Here is what the Trello Board looked like at this time:
 
 ![Trello Screenshot](./docs/Trello_3.jpg)
 
-3. __Fourth phase__
+4. __Fourth phase__
 
 The following coding-related tasks were completed at this time:
 
@@ -1141,7 +1760,39 @@ Here is the Trello Board at this point for this phase:
 It can be seen that I had made a whole new column called "Testing done". This is because I realised that there would be a lot of testing of the application and API endpoints. Hence I believed it would be best to split the coding and the testing related tasks.
 
 
+5. __Fifth phase__
 
+At this time, 90-100% of the coding had been completed for the application. The only coding left was adjustments to account for errors and testing. 
+
+As code was completed, the testing related tasks were completed accordingly (for example, tests related to the associated functions of code that were written). API testing to ensure that everything was working as intended, was completed throughout the coding process.
+
+This can be shown in the Trello Board screenshot below at this time:
+
+![Trello Screenshot](./docs/Trello_5.jpg)
+
+For this phase, it was noted that the next tasks to complete was all the documentation related tasks that could be addressed once most of the coding was done.
+
+This included
+- Detailing all API endpoints
+- Explaining ERD, relations and models
+- Explaining third party services/packages used. 
+
+During this time, I also made a number of edits to the ERD diagram to accurately reflect what was coded in the API Webserver Application. 
+
+6. __Final phase__
+
+At this point in time, R5 of the documentation was completed detailing the APi endpoints. 
+
+I had made the decision to test all the APi endpoints and queries whilst documenting them. This helped me to make sure everything was working as intended, whilst completing the documentation.
+
+After this, the documentation for the ERD, database Relations, application Models and explanation of the third party services/packages were completed.
+
+Once again, whilst documenting these, specifically for the Models, I also did a review of the code for the Models and Schemas. This was done to help save time by batching these tasks together. 
+
+After all the documentation was done, the final tasks to complete was to review the comments in the application code to ensure that everything was clear, as well as completing the final R10 documentation showing the planning of tasks for this project. Here is the final screenshot of the Trello board at this time:
+
+
+![Trello Screenshot](./docs/Trello_6.jpg)
 
 
 ## REFERENCES
@@ -1163,6 +1814,27 @@ It can be seen that I had made a whole new column called "Testing done". This is
 (8) [SQLAlchemy](https://www.sqlalchemy.org/)
 
 (9) [Bits and Pieces](https://blog.bitsrc.io/what-is-an-orm-and-why-you-should-use-it-b2b6f75f5e2a)
+
+(10) [Postman](https://www.postman.com/)
+
+(11) [javatpoint](https://www.javatpoint.com/postman)
+
+(12) [Pypi.org](https://pypi.org/)
+
+(13) [Pythonbasics](https://pythonbasics.org/what-is-flask-python/)
+
+(14) [Flask](https://flask.palletsprojects.com/en/2.2.x/)
+
+(15) [Marshmallow](https://marshmallow.readthedocs.io/en/stable/)
+
+(16) [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
+
+(17) [Vscode](https://code.visualstudio.com/docs)
+
+(18) [Github](https://github.com/)
+
+
+
 
 
 
